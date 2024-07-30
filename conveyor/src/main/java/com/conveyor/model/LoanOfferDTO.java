@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class LoanOfferDTO {
-    @NotEmpty
     private Long id;
 
     @NotEmpty
