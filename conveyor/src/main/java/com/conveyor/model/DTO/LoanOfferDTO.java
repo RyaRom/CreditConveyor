@@ -1,34 +1,34 @@
-package com.conveyor.model;
+package com.conveyor.model.DTO;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class LoanOfferDTO {
     private Long id;
 
-    @NotEmpty
+    @NotNull
     @Min(10000)
     private Double requestedAmount;
 
-    @NotEmpty
+    @NotNull
     @Min(10000)
     private Double totalAmount;
 
-    @NotEmpty
+    @NotNull
     @Min(6)
     private Integer term;
 
-    @NotEmpty
+    @NotNull
     private Double monthlyPayment;
 
-    @NotEmpty
+    @NotNull
     private Double rate;
 
-    @NotEmpty
+    @NotNull
     private Boolean isInsuranceEnabled;
 
-    @NotEmpty
+    @NotNull
     private Boolean isSalaryClient;
 }
