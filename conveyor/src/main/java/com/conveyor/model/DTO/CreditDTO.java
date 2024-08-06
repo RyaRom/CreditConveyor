@@ -1,8 +1,12 @@
 package com.conveyor.model.DTO;
 
+import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
+@Builder
 public class CreditDTO {
     private Double amount;
     private Integer term;
@@ -11,5 +15,5 @@ public class CreditDTO {
     private Double psk;
     private Boolean isInsuranceEnabled;
     private Boolean isSalaryClient;
-    private PaymentScheduleElementDTO paymentSchedule;
+    private List<PaymentScheduleElement> paymentSchedule;
 }

@@ -1,11 +1,13 @@
 package com.conveyor.model.DTO;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class LoanApplicationRequestDTO {
     @NotNull
     @Min(10000)

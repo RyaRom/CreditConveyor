@@ -1,13 +1,15 @@
 package com.conveyor.model.DTO;
 
-import com.conveyor.model.EmploymentStatus;
-import com.conveyor.model.Position;
+import com.conveyor.model.enums.EmploymentStatus;
+import com.conveyor.model.enums.Position;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 
 @Data
-public class EmploymentDTO {
+@Builder
+public class Employment {
     @NotNull
     private EmploymentStatus employmentStatus;
     @Pattern(regexp = "[0-9]{12}")
