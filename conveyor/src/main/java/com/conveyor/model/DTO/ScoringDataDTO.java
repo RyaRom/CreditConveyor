@@ -1,14 +1,16 @@
 package com.conveyor.model.DTO;
 
-import com.conveyor.model.Gender;
-import com.conveyor.model.MaritalStatus;
+import com.conveyor.model.enums.Gender;
+import com.conveyor.model.enums.MaritalStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class ScoringDataDTO {
     @Min(10000)
     private Double amount;
@@ -40,7 +42,7 @@ public class ScoringDataDTO {
     private LocalDate passportIssueBranch;
     private MaritalStatus maritalStatus;
     private Integer dependentAmount;
-    private EmploymentDTO employment;
+    private Employment employment;
     private Boolean isInsuranceEnabled;
     private Boolean isSalaryClient;
 }

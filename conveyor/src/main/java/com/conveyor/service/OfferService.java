@@ -27,19 +27,18 @@ public class OfferService {
         return offers;
     }
     public LoanOfferDTO generateOffer(LoanApplicationRequestDTO loanApplicationRequestDTO, boolean isInsuranceEnabled, boolean isSalaryClient ){
-        LoanOfferDTO offer = new LoanOfferDTO();
-        offer.setRequestedAmount(loanApplicationRequestDTO.getAmount());
-        offer.setTerm(loanApplicationRequestDTO.getTerm());
-        offer.setIsInsuranceEnabled(isInsuranceEnabled);
-        offer.setIsSalaryClient(isSalaryClient);
         Double rate = scoringService.getRate(isInsuranceEnabled, isSalaryClient);
-        offer.setRate(rate);
         Double totalAmount = scoringService.getTotalAmount(isInsuranceEnabled, isSalaryClient, loanApplicationRequestDTO.getAmount());
-        offer.setTotalAmount(totalAmount);
-        offer.setMonthlyPayment(
-                scoringService.getMonthlyPayment(totalAmount, rate, loanApplicationRequestDTO.getTerm())
-        );
-        return offer;
+        Double monthlyPayment = scoringService.getMonthlyPayment(totalAmount, rate, loanApplicationRequestDTO.getTerm());
+        return LoanOfferDTO.builder()
+                .requestedAmount(loanApplicationRequestDTO.getAmount())
+                .term(loanApplicationRequestDTO.getTerm())
+                .isInsuranceEnabled(isInsuranceEnabled)
+                .isSalaryClient(isSalaryClient)
+                .rate(rate)
+                .totalAmount(totalAmount)
+                .monthlyPayment(monthlyPayment)
+                .build();
     }
 
 }
