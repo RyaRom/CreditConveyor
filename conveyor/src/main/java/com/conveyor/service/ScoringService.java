@@ -2,13 +2,15 @@ package com.conveyor.service;
 
 import com.conveyor.exception.FailedScoringException;
 import com.conveyor.model.DTO.CreditDTO;
-import com.conveyor.model.DTO.Employment;
-import com.conveyor.model.DTO.PaymentScheduleElement;
+import com.conveyor.model.DTO.EmploymentDTO;
+import com.conveyor.model.DTO.PaymentScheduleElementDTO;
 import com.conveyor.model.DTO.ScoringDataDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +19,13 @@ import java.util.List;
 @Service
 public class ScoringService {
     @Value("${scoring.base_rate}")
-    private static Double BASE_RATE;
+    private Double BASE_RATE;
     @Value("${scoring.insurance_discount}")
-    private static Double INSURANCE_DISCOUNT;
+    private Double INSURANCE_DISCOUNT;
     @Value("${scoring.insurance_cost}")
-    private static Double INSURANCE_COST;
+    private Double INSURANCE_COST;
     @Value("${scoring.salary_client_discount}")
-    private static Double SALARY_CLIENT_DISCOUNT;
+    private Double SALARY_CLIENT_DISCOUNT;
     public CreditDTO scoring(ScoringDataDTO scoringData) throws FailedScoringException {
         Double rate = getRate(scoringData.getIsInsuranceEnabled(), scoringData.getIsSalaryClient());
         rate = calculateFinalRate(scoringData, rate);
@@ -32,23 +34,31 @@ public class ScoringService {
                 scoringData.getIsSalaryClient(),
                 scoringData.getAmount()
         );
-        Double monthlyPayment = getMonthlyPayment(totalAmount, rate, scoringData.getTerm());
-        List<PaymentScheduleElement> payments = getPayments(totalAmount, rate, monthlyPayment, scoringData.getTerm());
+        Double monthlyPayment = round(getMonthlyPayment(totalAmount, rate, scoringData.getTerm()));
+        List<PaymentScheduleElementDTO> payments = getPayments(totalAmount, rate, monthlyPayment, scoringData.getTerm());
         Double psk = getPSK(payments, scoringData.getAmount(), scoringData.getTerm());
 
-        return CreditDTO.builder()
+        CreditDTO credit = CreditDTO.builder()
                 .amount(totalAmount)
                 .isSalaryClient(scoringData.getIsSalaryClient())
                 .isInsuranceEnabled(scoringData.getIsInsuranceEnabled())
                 .term(scoringData.getTerm())
                 .rate(rate)
-                .psk(psk)
+                .psk(round(psk))
                 .monthlyPayment(monthlyPayment)
                 .paymentSchedule(payments)
                 .build();
+        log.info("\n  Credit created {}   \n For person {} ", credit.toString(), scoringData.getAccount());
+        log.info("\n  Payment schedule {}  ", payments);
+        return credit;
+    }
+    protected Double round(Double value){
+        BigDecimal bigDecimalValue = new BigDecimal(value);
+        BigDecimal roundedValue = bigDecimalValue.setScale(2, RoundingMode.UP);
+        return roundedValue.doubleValue();
     }
     private Double calculateFinalRate(ScoringDataDTO scoringData, Double baseRate) throws FailedScoringException {
-        Employment employment = scoringData.getEmployment();
+        EmploymentDTO employment = scoringData.getEmployment();
         List<String> refuseReasons = new ArrayList<>();
         switch (employment.getEmploymentStatus()){
             case UNEMPLOYED -> refuseReasons.add("Unemployment");
@@ -88,15 +98,15 @@ public class ScoringService {
         }
         return baseRate;
     }
-    private Double getPSK(List<PaymentScheduleElement> payments, Double requestedAmount, Integer term){
-        Double paymentSum = payments.stream().map(PaymentScheduleElement::getTotalPayment).reduce(Double::sum).orElse(0.0);
+    private Double getPSK(List<PaymentScheduleElementDTO> payments, Double requestedAmount, Integer term){
+        Double paymentSum = payments.stream().map(PaymentScheduleElementDTO::getTotalPayment).reduce(Double::sum).orElse(0.0);
         return 100*(paymentSum/requestedAmount-1)/(term/12);
     }
-    private List<PaymentScheduleElement> getPayments(Double totalAmount, Double rate, Double monthlyPayment ,Integer term){
+    private List<PaymentScheduleElementDTO> getPayments(Double totalAmount, Double rate, Double monthlyPayment , Integer term){
         Double remainingDebt = totalAmount;
         LocalDate date = LocalDate.now();
-        List<PaymentScheduleElement> payments = new ArrayList<>(List.of(
-                PaymentScheduleElement.builder()
+        List<PaymentScheduleElementDTO> payments = new ArrayList<>(List.of(
+                PaymentScheduleElementDTO.builder()
                         .number(0)
                         .date(date)
                         .remainingDebt(remainingDebt)
@@ -107,10 +117,10 @@ public class ScoringService {
         ));
         for (int i = 1; i <= term; i++) {
             date = date.plusMonths(1);
-            Double interestPayment = remainingDebt * (rate/100)/12;
-            double debtPayment = monthlyPayment-interestPayment;
-            remainingDebt-=debtPayment;
-            payments.add(PaymentScheduleElement
+            Double interestPayment = round(remainingDebt * (rate/100)/12);
+            Double debtPayment = round(remainingDebt-interestPayment);
+            remainingDebt = round(remainingDebt-debtPayment);
+            payments.add(PaymentScheduleElementDTO
                     .builder()
                             .date(date)
                             .number(i)
