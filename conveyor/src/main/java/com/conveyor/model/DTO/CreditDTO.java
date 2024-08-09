@@ -1,5 +1,6 @@
 package com.conveyor.model.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,21 +10,43 @@ import java.util.List;
 
 @Data
 @Builder
+@Schema(title = "Credit", description = "Credit's info.")
 public class CreditDTO {
-    @NotNull
+
+    @Schema(description = "Requested loan amount.", example = "1000000.00")
     private Double amount;
-    @NotNull
+
+    @Schema(description = "Requested loan term (months).", example = "24")
     private Integer term;
-    @NotNull
+
+    @Schema(description = "Monthly payment.", example = "10000.10")
     private Double monthlyPayment;
-    @NotNull
+
+    @Schema(description = "Loan rate.", example = "12.50")
     private Double rate;
-    @NotNull
+
+    @Schema(description = "Loan Full Price.", example = "12.50")
     private Double psk;
-    @NotNull
+
+    @Schema(description = "Is insurance enabled?", example = "true")
     private Boolean isInsuranceEnabled;
-    @NotNull
+
+    @Schema(description = "Is salary client?", example = "true")
     private Boolean isSalaryClient;
-    @NotEmpty
-    private List<PaymentScheduleElement> paymentSchedule;
+
+    @Schema(description = "Payment schedule elements.")
+    private List<PaymentScheduleElementDTO> paymentSchedule;
+
+    @Override
+    public String toString() {
+        return "CreditDTO{" +
+                "amount=" + amount +
+                "\n term=" + term +
+                "\n monthlyPayment=" + monthlyPayment +
+                "\n rate=" + rate +
+                "\n psk=" + psk +
+                "\n isInsuranceEnabled=" + isInsuranceEnabled +
+                "\n isSalaryClient=" + isSalaryClient +
+                '}';
+    }
 }
