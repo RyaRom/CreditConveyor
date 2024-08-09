@@ -100,7 +100,9 @@ public class ScoringService {
     }
     private Double getPSK(List<PaymentScheduleElementDTO> payments, Double requestedAmount, Integer term){
         Double paymentSum = payments.stream().map(PaymentScheduleElementDTO::getTotalPayment).reduce(Double::sum).orElse(0.0);
-        return 100*(paymentSum/requestedAmount-1)/(term/12);
+        Double psk = 100*(paymentSum/requestedAmount-1)/(term/12);
+        log.info(" \n\n PSK = {}  \n\n", psk);
+        return psk;
     }
     private List<PaymentScheduleElementDTO> getPayments(Double totalAmount, Double rate, Double monthlyPayment , Integer term){
         Double remainingDebt = totalAmount;
@@ -118,8 +120,8 @@ public class ScoringService {
         for (int i = 1; i <= term; i++) {
             date = date.plusMonths(1);
             Double interestPayment = round(remainingDebt * (rate/100)/12);
-            Double debtPayment = round(remainingDebt-interestPayment);
-            remainingDebt = round(remainingDebt-debtPayment);
+            Double debtPayment = round(monthlyPayment-interestPayment);
+            remainingDebt = Math.max(0,round(remainingDebt-debtPayment));
             payments.add(PaymentScheduleElementDTO
                     .builder()
                             .date(date)

@@ -38,6 +38,6 @@ public class PaymentScheduleElementDTO {
                 "\n interestPayment=" + interestPayment +
                 "\n debtPayment=" + debtPayment +
                 "\n remainingDebt=" + remainingDebt +
-                '}';
+                "}\n";
     }
 }
