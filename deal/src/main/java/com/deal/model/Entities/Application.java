@@ -1,4 +1,4 @@
-package com.deal.model;
+package com.deal.model.Entities;
 
 import com.deal.model.enums.ApplicationStatus;
 import com.deal.model.json.StatusHistory;
@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+
 
 import java.time.LocalDateTime;
 

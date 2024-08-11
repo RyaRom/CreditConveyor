@@ -1,4 +1,4 @@
-package com.deal.model;
+package com.deal.model.Entities;
 
 import com.deal.model.enums.Gender;
 import com.deal.model.enums.MaritalStatus;

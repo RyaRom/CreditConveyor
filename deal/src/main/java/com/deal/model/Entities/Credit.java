@@ -1,5 +1,6 @@
-package com.deal.model;
+package com.deal.model.Entities;
 
+import com.deal.model.PaymentScheduleElement;
 import com.deal.model.enums.CreditStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
