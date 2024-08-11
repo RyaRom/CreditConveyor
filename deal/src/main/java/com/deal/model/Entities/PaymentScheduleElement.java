@@ -1,4 +1,4 @@
-package com.deal.model;
+package com.deal.model.Entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
