@@ -1,8 +1,6 @@
-package com.conveyor.model.DTO;
+package com.conveyor.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -36,17 +34,4 @@ public class CreditDTO {
 
     @Schema(description = "Payment schedule elements.")
     private List<PaymentScheduleElementDTO> paymentSchedule;
-
-    @Override
-    public String toString() {
-        return "CreditDTO{" +
-                "amount=" + amount +
-                "\n term=" + term +
-                "\n monthlyPayment=" + monthlyPayment +
-                "\n rate=" + rate +
-                "\n psk=" + psk +
-                "\n isInsuranceEnabled=" + isInsuranceEnabled +
-                "\n isSalaryClient=" + isSalaryClient +
-                '}';
-    }
 }

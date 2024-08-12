@@ -1,4 +1,4 @@
-package com.conveyor.model.DTO;
+package com.conveyor.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -28,16 +28,4 @@ public class PaymentScheduleElementDTO {
 
     @Schema(description = "Remaining debt amount.", example = "92000.00")
     private Double remainingDebt;
-
-    @Override
-    public String toString() {
-        return "PaymentScheduleElementDTO{" +
-                "number=" + number +
-                "\n date=" + date +
-                "\n totalPayment=" + totalPayment +
-                "\n interestPayment=" + interestPayment +
-                "\n debtPayment=" + debtPayment +
-                "\n remainingDebt=" + remainingDebt +
-                "}\n";
-    }
 }
