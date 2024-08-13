@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: deal
+  datasource:
+    username: postgres
+    password: password
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
