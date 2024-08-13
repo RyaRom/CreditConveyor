@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class PaymentScheduleElement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long schedule_element_id;
     private Integer number;
     private LocalDate date;
     private Double totalPayment;
