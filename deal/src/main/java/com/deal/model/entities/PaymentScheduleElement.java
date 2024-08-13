@@ -1,4 +1,4 @@
-package com.deal.model.Entities;
+package com.deal.model.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +10,8 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class PaymentScheduleElement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

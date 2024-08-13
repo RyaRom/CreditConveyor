@@ -1,7 +1,11 @@
-package com.deal.model.DTO;
+package com.deal.model.dto;
 
+import com.deal.model.enums.Gender;
+import com.deal.model.enums.MaritalStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,8 +13,8 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-@Schema(title = "Loan Application Request", description = "Short application info.")
-public class LoanApplicationRequestDTO {
+@Schema(title = "Scoring Data", description = "Full scoring data.")
+public class ScoringDataDTO {
 
     @Schema(description = "Requested loan amount.", example = "1000000", minimum = "10000")
     @NotNull
@@ -36,10 +40,8 @@ public class LoanApplicationRequestDTO {
     @Pattern(regexp = "[A-Za-z]{2,30}")
     private String middleName;
 
-    @Schema(description = "Client's email.", example = "iivanov@email.ru")
-    @NotNull
-    @Email
-    private String email;
+    @Schema(description = "Client's gender.", example = "MALE")
+    private Gender gender;
 
     @Schema(description = "Client's birthdate", example = "1996-11-27", format = "date")
     @NotNull
@@ -54,5 +56,30 @@ public class LoanApplicationRequestDTO {
     @NotNull
     @Pattern(regexp = "[0-9]{6}")
     private String passportNumber;
+
+    @Schema(description = "Client's passport issue date.", example = "2016-11-27", format = "date")
+    private LocalDate passportIssueDate;
+
+    @Schema(description = "Client's passport issue branch.", example = "123-456")
+    private String passportIssueBranch;
+
+    @Schema(description = "Client's marital status.", example = "SINGLE")
+    private MaritalStatus maritalStatus;
+
+    @Schema(description = "Client's dependents amount.", example = "1")
+    private Integer dependentAmount;
+
+    @Schema(description = "Client's employment info.")
+    private EmploymentDTO employment;
+
+    @Schema(description = "Client's master account.", example = "11223344556677889900", pattern = "[0-9]{20}")
+    @Pattern(regexp = "[0-9]{20}")
+    private String account;
+
+    @Schema(description = "Is insurance enabled?", example = "true")
+    private Boolean isInsuranceEnabled;
+
+    @Schema(description = "Is salary client?", example = "true")
+    private Boolean isSalaryClient;
 
 }

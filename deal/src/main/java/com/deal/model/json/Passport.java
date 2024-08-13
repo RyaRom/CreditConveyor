@@ -5,7 +5,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
+@Setter
 public class Passport {
     private String series;
     private String number;

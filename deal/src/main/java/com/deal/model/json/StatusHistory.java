@@ -6,7 +6,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
+@Setter
 public class StatusHistory {
     private String status;
     private LocalDateTime time;
