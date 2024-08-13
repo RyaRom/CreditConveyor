@@ -1,9 +1,9 @@
 package com.deal.service;
 
-import com.deal.model.DTO.LoanApplicationRequestDTO;
-import com.deal.model.DTO.LoanOfferDTO;
-import com.deal.model.Entities.Application;
-import com.deal.model.Entities.Client;
+import com.deal.model.dto.LoanApplicationRequestDTO;
+import com.deal.model.dto.LoanOfferDTO;
+import com.deal.model.entities.Application;
+import com.deal.model.entities.Client;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
@@ -23,7 +23,7 @@ public class DealService {
         this.applicationRepo = applicationRepo;
     }
 
-    public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO){
+    public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         Client client = applicationRequestMapper.toClient(loanApplicationRequestDTO);
         Application application = new Application();
         application.setClient_id(client);

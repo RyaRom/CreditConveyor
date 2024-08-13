@@ -5,7 +5,8 @@ import com.deal.model.enums.Position;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class Employment {
     private EmploymentStatus status;
     private String employment_inn;

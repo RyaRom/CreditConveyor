@@ -1,9 +1,7 @@
 package com.deal.model.mapping;
 
-import com.deal.model.DTO.LoanApplicationRequestDTO;
-import com.deal.model.Entities.Application;
-import com.deal.model.Entities.Client;
-import com.deal.model.enums.ApplicationStatus;
+import com.deal.model.dto.LoanApplicationRequestDTO;
+import com.deal.model.entities.Client;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

@@ -1,4 +1,4 @@
-package com.deal.model.Entities;
+package com.deal.model.entities;
 
 import com.deal.model.enums.ApplicationStatus;
 import com.deal.model.json.StatusHistory;
@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
-
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

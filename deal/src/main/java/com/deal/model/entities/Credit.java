@@ -1,4 +1,4 @@
-package com.deal.model.Entities;
+package com.deal.model.entities;
 
 import com.deal.model.enums.CreditStatus;
 import jakarta.persistence.*;
@@ -8,7 +8,8 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Credit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

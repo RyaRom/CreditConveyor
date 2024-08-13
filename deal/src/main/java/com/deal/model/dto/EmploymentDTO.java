@@ -1,13 +1,13 @@
-package com.deal.model.DTO;
+package com.deal.model.dto;
 
 
 import com.deal.model.enums.EmploymentStatus;
 import com.deal.model.enums.Position;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
 
 @Data
 @Builder

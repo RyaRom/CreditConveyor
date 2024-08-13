@@ -1,7 +1,6 @@
 package com.deal.repo;
 
-import com.deal.model.Entities.Application;
-import com.deal.model.Entities.Client;
+import com.deal.model.entities.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

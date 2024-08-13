@@ -1,4 +1,4 @@
-package com.deal.model.Entities;
+package com.deal.model.entities;
 
 import com.deal.model.enums.Gender;
 import com.deal.model.enums.MaritalStatus;
@@ -13,7 +13,8 @@ import org.hibernate.annotations.Type;
 import java.time.LocalDate;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
