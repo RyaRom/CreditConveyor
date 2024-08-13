@@ -28,14 +28,14 @@ public class ScoringService {
     private Double salaryClientDiscount;
 
     public CreditDTO scoring(ScoringDataDTO scoringData) throws FailedScoringException {
-        Double rate = getRate(scoringData.getIsInsuranceEnabled(), scoringData.getIsSalaryClient());
+        Double rate = getBaseRate(scoringData.getIsInsuranceEnabled(), scoringData.getIsSalaryClient());
         rate = calculateFinalRate(scoringData, rate);
         Double totalAmount = getTotalAmount(
                 scoringData.getIsInsuranceEnabled(),
                 scoringData.getIsSalaryClient(),
                 scoringData.getAmount()
         );
-        Double monthlyPayment = round(getMonthlyPayment(totalAmount, rate, scoringData.getTerm()));
+        Double monthlyPayment = getMonthlyPayment(totalAmount, rate, scoringData.getTerm());
         List<PaymentScheduleElementDTO> payments = getPayments(totalAmount, rate, monthlyPayment, scoringData.getTerm());
         Double psk = getPSK(payments, scoringData.getAmount(), scoringData.getTerm());
 
@@ -55,6 +55,7 @@ public class ScoringService {
     }
 
     protected Double round(Double value) {
+        if (Math.abs(value) < 1) return 0.0;
         BigDecimal bigDecimalValue = new BigDecimal(value);
         BigDecimal roundedValue = bigDecimalValue.setScale(2, RoundingMode.UP);
         return roundedValue.doubleValue();
@@ -95,8 +96,8 @@ public class ScoringService {
         if (employment.getWorkExperienceCurrent() < 3) refuseReasons.add("Not enough current work experience");
         if (employment.getWorkExperienceTotal() < 12) refuseReasons.add("Not enough work experience");
         if (!refuseReasons.isEmpty()) {
-            String message = scoringData.getAccount() + "\n"
-                    + String.join("\n", refuseReasons);
+            String message = "Client " + scoringData.getAccount() + " "
+                    + String.join(", ", refuseReasons);
             throw new FailedScoringException(message);
         }
         return baseRate;
@@ -105,7 +106,7 @@ public class ScoringService {
     private Double getPSK(List<PaymentScheduleElementDTO> payments, Double requestedAmount, Integer term) {
         Double paymentSum = payments.stream().map(PaymentScheduleElementDTO::getTotalPayment).reduce(Double::sum).orElse(0.0);
         Double psk = 100 * (paymentSum / requestedAmount - 1) / (term / 12);
-        log.info("\n\nPSK = {}\n\n", psk);
+        log.info("PSK = {}", psk);
         return psk;
     }
 
@@ -126,7 +127,7 @@ public class ScoringService {
             date = date.plusMonths(1);
             Double interestPayment = round(remainingDebt * (rate / 100) / 12);
             Double debtPayment = round(monthlyPayment - interestPayment);
-            remainingDebt = Math.max(0, round(remainingDebt - debtPayment));
+            remainingDebt = round(remainingDebt - debtPayment);
             payments.add(PaymentScheduleElementDTO
                     .builder()
                     .date(date)
@@ -144,7 +145,7 @@ public class ScoringService {
         return LocalDate.now().getYear() - birthdate.getYear();
     }
 
-    public Double getRate(Boolean isInsuranceEnabled, Boolean isSalaryClient) {
+    public Double getBaseRate(Boolean isInsuranceEnabled, Boolean isSalaryClient) {
         Double rate = baseRate;
         rate -= isInsuranceEnabled ? insuranceDiscount : 0;
         rate -= isSalaryClient ? salaryClientDiscount : 0;
@@ -162,6 +163,6 @@ public class ScoringService {
         double monthlyRate = rate / (100 * 12);
         double numerator = monthlyRate * Math.pow(1 + monthlyRate, term);
         double denominator = Math.pow(1 + monthlyRate, term) - 1;
-        return totalAmount * (numerator / denominator);
+        return round(totalAmount * (numerator / denominator));
     }
 }

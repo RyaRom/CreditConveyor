@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FailedScoringException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage scoringError(FailedScoringException exception, WebRequest request) {
-        log.warn("Failed scoring for client {}", exception.getMessage());
+        log.warn("Failed scoring for {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(new Date())

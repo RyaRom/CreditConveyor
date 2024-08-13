@@ -28,7 +28,7 @@ public class OfferService {
     }
 
     public LoanOfferDTO generateOffer(LoanApplicationRequestDTO loanApplicationRequestDTO, boolean isInsuranceEnabled, boolean isSalaryClient) {
-        Double rate = scoringService.getRate(isInsuranceEnabled, isSalaryClient);
+        Double rate = scoringService.getBaseRate(isInsuranceEnabled, isSalaryClient);
         Double totalAmount = scoringService.getTotalAmount(isInsuranceEnabled, isSalaryClient, loanApplicationRequestDTO.getAmount());
         Double monthlyPayment = scoringService.getMonthlyPayment(totalAmount, rate, loanApplicationRequestDTO.getTerm());
         LoanOfferDTO loanOffer = LoanOfferDTO.builder()
@@ -40,7 +40,7 @@ public class OfferService {
                 .totalAmount(totalAmount)
                 .monthlyPayment(scoringService.round(monthlyPayment))
                 .build();
-        log.info("\nLoan offer crated {}", loanOffer.toString());
+        log.info("Loan offer created {}", loanOffer.toString());
         return loanOffer;
     }
 
