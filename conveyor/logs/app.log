@@ -1,0 +1,142 @@
+2024-08-14 18:37:18 INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-08-14 18:37:18 INFO  com.conveyor.ConveyorApplication - Starting ConveyorApplication using Java 21.0.2 with PID 11424 (C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor\target\classes started by locadm in C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor)
+2024-08-14 18:37:18 INFO  com.conveyor.ConveyorApplication - No active profile set, falling back to 1 default profile: "default"
+2024-08-14 18:37:20 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-08-14 18:37:20 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:37:20 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-08-14 18:37:20 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-08-14 18:37:20 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-08-14 18:37:20 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2049 ms
+2024-08-14 18:37:23 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:37:23 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-08-14 18:37:23 INFO  com.conveyor.ConveyorApplication - Started ConveyorApplication in 5.511 seconds (process running for 7.382)
+2024-08-14 18:37:49 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-14 18:37:49 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-08-14 18:37:49 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2024-08-14 18:37:54 INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 797 ms
+2024-08-14 18:38:01 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=48012.89, rate=14.0, isInsuranceEnabled=true, isSalaryClient=true)
+2024-08-14 18:38:01 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1100000.0, term=24, monthlyPayment=53335.32, rate=15.0, isInsuranceEnabled=true, isSalaryClient=false)
+2024-08-14 18:38:01 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49442.27, rate=17.0, isInsuranceEnabled=false, isSalaryClient=true)
+2024-08-14 18:38:01 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49924.12, rate=18.0, isInsuranceEnabled=false, isSalaryClient=false)
+2024-08-14 18:38:17 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=48012.89, rate=14.0, isInsuranceEnabled=true, isSalaryClient=true)
+2024-08-14 18:38:17 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1100000.0, term=24, monthlyPayment=53335.32, rate=15.0, isInsuranceEnabled=true, isSalaryClient=false)
+2024-08-14 18:38:17 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49442.27, rate=17.0, isInsuranceEnabled=false, isSalaryClient=true)
+2024-08-14 18:38:17 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49924.12, rate=18.0, isInsuranceEnabled=false, isSalaryClient=false)
+2024-08-14 18:39:05 WARN  c.c.exception.GlobalExceptionHandler - Failed prescoring Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.conveyor.model.dto.CreditDTO> com.conveyor.controller.ConveyorController.finalScoring(com.conveyor.model.dto.ScoringDataDTO) throws com.conveyor.exception.FailedScoringException with 2 errors: [Field error in object 'scoringDataDTO' on field 'passportNumber': rejected value [null]; codes [NotNull.scoringDataDTO.passportNumber,NotNull.passportNumber,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.passportNumber,passportNumber]; arguments []; default message [passportNumber]]; default message [must not be null]] [Field error in object 'scoringDataDTO' on field 'birthdate': rejected value [null]; codes [NotNull.scoringDataDTO.birthdate,NotNull.birthdate,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.birthdate,birthdate]; arguments []; default message [birthdate]]; default message [must not be null]] 
+2024-08-14 18:41:57 INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-08-14 18:41:57 INFO  com.conveyor.ConveyorApplication - Starting ConveyorApplication using Java 21.0.2 with PID 3128 (C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor\target\classes started by locadm in C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor)
+2024-08-14 18:41:57 INFO  com.conveyor.ConveyorApplication - No active profile set, falling back to 1 default profile: "default"
+2024-08-14 18:41:59 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-08-14 18:41:59 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:41:59 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-08-14 18:41:59 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-08-14 18:41:59 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-08-14 18:41:59 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1993 ms
+2024-08-14 18:42:01 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:42:01 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-08-14 18:42:01 INFO  com.conveyor.ConveyorApplication - Started ConveyorApplication in 4.864 seconds (process running for 7.001)
+2024-08-14 18:42:11 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-14 18:42:11 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-08-14 18:42:11 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2024-08-14 18:42:11 INFO  com.conveyor.service.LoggingFilter - conveyor-MC; Request: org.apache.catalina.connector.RequestFacade@5d3b5d01
+2024-08-14 18:42:11 WARN  c.c.exception.GlobalExceptionHandler - Failed prescoring Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.conveyor.model.dto.CreditDTO> com.conveyor.controller.ConveyorController.finalScoring(com.conveyor.model.dto.ScoringDataDTO) throws com.conveyor.exception.FailedScoringException with 2 errors: [Field error in object 'scoringDataDTO' on field 'birthdate': rejected value [null]; codes [NotNull.scoringDataDTO.birthdate,NotNull.birthdate,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.birthdate,birthdate]; arguments []; default message [birthdate]]; default message [must not be null]] [Field error in object 'scoringDataDTO' on field 'passportNumber': rejected value [null]; codes [NotNull.scoringDataDTO.passportNumber,NotNull.passportNumber,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.passportNumber,passportNumber]; arguments []; default message [passportNumber]]; default message [must not be null]] 
+2024-08-14 18:42:11 INFO  com.conveyor.service.LoggingFilter - conveyor-MC; Response: org.apache.catalina.connector.ResponseFacade@1eb8a554
+2024-08-14 18:46:07 INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-08-14 18:46:07 INFO  com.conveyor.ConveyorApplication - Starting ConveyorApplication using Java 21.0.2 with PID 12308 (C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor\target\classes started by locadm in C:\Users\locadm\IdeaProjects\CreditConveyor\conveyor)
+2024-08-14 18:46:07 INFO  com.conveyor.ConveyorApplication - No active profile set, falling back to 1 default profile: "default"
+2024-08-14 18:46:09 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-08-14 18:46:09 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:46:09 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-08-14 18:46:09 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-08-14 18:46:09 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-08-14 18:46:09 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2312 ms
+2024-08-14 18:46:09 DEBUG o.s.w.f.CommonsRequestLoggingFilter - Filter 'requestLoggingFilter' configured for use
+2024-08-14 18:46:12 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-08-14 18:46:12 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-08-14 18:46:12 INFO  com.conveyor.ConveyorApplication - Started ConveyorApplication in 5.824 seconds (process running for 7.531)
+2024-08-14 18:46:23 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-14 18:46:23 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-08-14 18:46:23 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-08-14 18:46:23 DEBUG o.s.w.f.CommonsRequestLoggingFilter - Before request [POST /conveyor/offers, client=127.0.0.1]
+2024-08-14 18:46:23 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=48012.89, rate=14.0, isInsuranceEnabled=true, isSalaryClient=true)
+2024-08-14 18:46:23 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1100000.0, term=24, monthlyPayment=53335.32, rate=15.0, isInsuranceEnabled=true, isSalaryClient=false)
+2024-08-14 18:46:23 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49442.27, rate=17.0, isInsuranceEnabled=false, isSalaryClient=true)
+2024-08-14 18:46:23 INFO  com.conveyor.service.OfferService - Loan offer created LoanOfferDTO(applicationId=null, requestedAmount=1000000.0, totalAmount=1000000.0, term=24, monthlyPayment=49924.12, rate=18.0, isInsuranceEnabled=false, isSalaryClient=false)
+2024-08-14 18:46:23 DEBUG o.s.w.f.CommonsRequestLoggingFilter - After request [POST /conveyor/offers, client=127.0.0.1, payload={
+  "amount": 1000000,
+  "term": 24,
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "middleName": "Ivanonovich",
+  "email": "iivanov@email.ru",
+  "birthdate": "1996-11-27",
+  "passportSeries": "1234",
+  "passportNumber": "123456"
+}]
+2024-08-14 18:46:51 DEBUG o.s.w.f.CommonsRequestLoggingFilter - Before request [POST /conveyor/calculation, client=127.0.0.1]
+2024-08-14 18:46:51 WARN  c.c.exception.GlobalExceptionHandler - Failed scoring for Client 11223344556677889900 Not enough current work experience, Not enough work experience
+2024-08-14 18:46:51 DEBUG o.s.w.f.CommonsRequestLoggingFilter - After request [POST /conveyor/calculation, client=127.0.0.1, payload={
+  "amount": 1000000,
+  "term": 24,
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "middleName": "Ivanonovich",
+  "gender": "MALE",
+  "birthdate": "1996-11-27",
+  "passportSeries": "1234",
+  "passportNumber": "123456",
+  "passportIssueDate": "2016-11-27",
+  "passportIssueBranch": "123-456",
+  "maritalStatus": "SINGLE",
+  "dependentAmount": 1,
+  "employment": {
+    "employmentStatus": "EMPLOYED",
+    "employerINN": "123456789012",
+    "salary": 100000,
+    "position": "WORKER",
+    "workExperienceTotal": 5,
+    "workExperienceCurrent": 2
+  },
+  "account": "11223344556677889900",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
+}]
+2024-08-14 18:46:54 DEBUG o.s.w.f.CommonsRequestLoggingFilter - Before request [POST /conveyor/calculation, client=127.0.0.1]
+2024-08-14 18:46:54 WARN  c.c.exception.GlobalExceptionHandler - Failed scoring for Client 11223344556677889900 Not enough current work experience, Not enough work experience
+2024-08-14 18:46:54 DEBUG o.s.w.f.CommonsRequestLoggingFilter - After request [POST /conveyor/calculation, client=127.0.0.1, payload={
+  "amount": 1000000,
+  "term": 24,
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "middleName": "Ivanonovich",
+  "gender": "MALE",
+  "birthdate": "1996-11-27",
+  "passportSeries": "1234",
+  "passportNumber": "123456",
+  "passportIssueDate": "2016-11-27",
+  "passportIssueBranch": "123-456",
+  "maritalStatus": "SINGLE",
+  "dependentAmount": 1,
+  "employment": {
+    "employmentStatus": "EMPLOYED",
+    "employerINN": "123456789012",
+    "salary": 100000,
+    "position": "WORKER",
+    "workExperienceTotal": 5,
+    "workExperienceCurrent": 2
+  },
+  "account": "11223344556677889900",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
+}]
+2024-08-14 18:47:03 DEBUG o.s.w.f.CommonsRequestLoggingFilter - Before request [POST /conveyor/calculation, client=0:0:0:0:0:0:0:1]
+2024-08-14 18:47:03 WARN  c.c.exception.GlobalExceptionHandler - Failed prescoring Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.conveyor.model.dto.CreditDTO> com.conveyor.controller.ConveyorController.finalScoring(com.conveyor.model.dto.ScoringDataDTO) throws com.conveyor.exception.FailedScoringException with 2 errors: [Field error in object 'scoringDataDTO' on field 'birthdate': rejected value [null]; codes [NotNull.scoringDataDTO.birthdate,NotNull.birthdate,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.birthdate,birthdate]; arguments []; default message [birthdate]]; default message [must not be null]] [Field error in object 'scoringDataDTO' on field 'passportNumber': rejected value [null]; codes [NotNull.scoringDataDTO.passportNumber,NotNull.passportNumber,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scoringDataDTO.passportNumber,passportNumber]; arguments []; default message [passportNumber]]; default message [must not be null]] 
+2024-08-14 18:47:03 DEBUG o.s.w.f.CommonsRequestLoggingFilter - After request [POST /conveyor/calculation, client=0:0:0:0:0:0:0:1, payload={
+    "amount":100000,
+    "term":7,
+    "firstName":"namee",
+    "lastName":"lnme",
+    "middleName":"middle",
+    "passportSeries":1234
+}]
+2024-08-14 18:47:18 INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
