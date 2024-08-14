@@ -1,12 +1,12 @@
 package com.deal.service;
 
 import com.deal.config.ConveyorClient;
-import com.deal.model.dto.LoanApplicationRequestDTO;
-import com.deal.model.dto.LoanOfferDTO;
+import com.deal.model.dto.*;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;
 import com.deal.model.enums.ApplicationStatus;
 import com.deal.model.enums.ChangeType;
+import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
 import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
@@ -47,25 +47,17 @@ public class ApplicationService {
     private Application createApplication(Client client) {
         Application application = new Application();
         application.setClient_id(client);
-        application.setStatus(ApplicationStatus.DOCUMENT_CREATED);
         application.setCreation_date(LocalDateTime.now());
-
-        List<StatusHistory> history = new ArrayList<>();
-        StatusHistory creation = new StatusHistory();
-        creation.setStatus(ApplicationStatus.DOCUMENT_CREATED);
-        creation.setTime(application.getCreation_date());
-        creation.setChange_type(ChangeType.AUTOMATIC);
-        history.add(creation);
-        application.setStatus_history_id(history);
+        updateApplicationStatus(application, ApplicationStatus.DOCUMENT_CREATED);
 
         return application;
     }
 
-    private void updateApplicationStatus(Application application) {
-        application.setStatus(ApplicationStatus.PREAPPROVAL);
+    private void updateApplicationStatus(Application application, ApplicationStatus status) {
+        application.setStatus(status);
 
         StatusHistory update = new StatusHistory();
-        update.setStatus(ApplicationStatus.PREAPPROVAL);
+        update.setStatus(status);
         update.setTime(LocalDateTime.now());
         update.setChange_type(ChangeType.AUTOMATIC);
 
@@ -79,9 +71,44 @@ public class ApplicationService {
 
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
         Application application = applicationRepo.getByApplication_id(loanOfferDTO.getApplicationId());
-        updateApplicationStatus(application);
+        updateApplicationStatus(application, ApplicationStatus.PREAPPROVAL);
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
         application.setApplied_offer(loanOffer);
         applicationRepo.save(application);
+    }
+
+    private ScoringDataDTO mapScoringData(FinishRegistrationRequestDTO request) {
+        return ScoringDataDTO.builder()
+                .gender(request.getGender())
+                .maritalStatus(request.getMaritalStatus())
+                .dependentAmount(request.getDependentAmount())
+                .employment(request.getEmployment())
+                .account(request.getAccount())
+                .build();
+    }
+
+    private void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
+        Client client = application.getClient_id();
+        client.setGender(request.getGender());
+        client.setMarital_status(request.getMaritalStatus());
+        client.setDependent_amount(request.getDependentAmount());
+        client.getPassport_id().setIssue_date(request.getPassportIssueDate());
+        client.getPassport_id().setIssue_branch(request.getPassportIssueBranch());
+        client.setAccount(request.getAccount());
+
+        Employment employment = applicationRequestMapper.toEmploymentJsonb(request.getEmployment());
+        client.setEmployment_id(employment);
+
+        clientRepo.save(client);
+    }
+
+    public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
+        Application application = applicationRepo.getByApplication_id(applicationId);
+        ScoringDataDTO scoringData = mapScoringData(finishRegistrationRequestDTO);
+        fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
+
+        CreditDTO creditDTO = conveyorClient.calculateCredit(scoringData);
+        //TODO: failed scoring case
+        //TODO: success scoring case
     }
 }
