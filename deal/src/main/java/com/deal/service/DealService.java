@@ -34,7 +34,7 @@ public class DealService {
         List<LoanOfferDTO> offers = conveyorClient.createOffers(loanApplicationRequestDTO);
         log.info("Response from conveyor MC: {}", offers);
         Long id = application.getApplication_id();
-        offers.forEach(offer->offer.setApplicationId(id));
+        offers.forEach(offer -> offer.setApplicationId(id));
 
         return offers;
     }
