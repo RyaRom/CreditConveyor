@@ -11,6 +11,6 @@ spring:
       ddl-auto: create-drop
 springdoc:
   swagger-ui:
-    path: /deal/swagger-ui
+    path: /deal/swagger-ui/
 server:
   port: 8081

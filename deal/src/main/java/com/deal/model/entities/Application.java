@@ -1,6 +1,7 @@
 package com.deal.model.entities;
 
 import com.deal.model.enums.ApplicationStatus;
+import com.deal.model.json.LoanOffer;
 import com.deal.model.json.StatusHistory;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,8 +28,11 @@ public class Application {
     private ApplicationStatus status;
     private LocalDateTime creation_date;
     private LocalDateTime sign_date;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private LoanOffer applied_offer;
     private String sec_code;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private StatusHistory status_history_id;
+    private List<StatusHistory> status_history_id;
 }

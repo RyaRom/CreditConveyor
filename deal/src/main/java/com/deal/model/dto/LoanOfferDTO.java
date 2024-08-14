@@ -3,11 +3,9 @@ package com.deal.model.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 @Schema(title = "Loan Offer", description = "Loan offer after short scoring.")
 public class LoanOfferDTO {
 
@@ -44,18 +42,4 @@ public class LoanOfferDTO {
     @Schema(description = "Is salary client?", example = "true")
     @NotNull
     private Boolean isSalaryClient;
-
-    @Override
-    public String toString() {
-        return "LoanOfferDTO{" +
-                "applicationId=" + applicationId +
-                "\n requestedAmount=" + requestedAmount +
-                "\n totalAmount=" + totalAmount +
-                "\n term=" + term +
-                "\n monthlyPayment=" + monthlyPayment +
-                "\n rate=" + rate +
-                "\n isInsuranceEnabled=" + isInsuranceEnabled +
-                "\n isSalaryClient=" + isSalaryClient +
-                '}';
-    }
 }
