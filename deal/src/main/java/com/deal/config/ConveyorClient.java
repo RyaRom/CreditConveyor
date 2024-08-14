@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
-@FeignClient(name = "conveyor-client", configuration = FeignConfig.class)
+@FeignClient(name = "conveyor-client", configuration = FeignConfig.class, url = "http://localhost:8080")
 public interface ConveyorClient {
     @PostMapping("/conveyor/offers")
     List<LoanOfferDTO> createOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);
