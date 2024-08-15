@@ -8,7 +8,13 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    user: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
 springdoc:
   swagger-ui:
     path: /deal/swagger-ui/
@@ -21,3 +27,5 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: DEBUG
+feign:
+  url: http://localhost:8080

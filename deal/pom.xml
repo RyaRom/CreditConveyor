@@ -96,6 +96,10 @@
             <version>3.2.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
