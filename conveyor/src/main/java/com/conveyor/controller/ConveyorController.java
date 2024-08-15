@@ -1,6 +1,5 @@
 package com.conveyor.controller;
 
-import com.conveyor.exception.FailedScoringException;
 import com.conveyor.model.dto.CreditDTO;
 import com.conveyor.model.dto.LoanApplicationRequestDTO;
 import com.conveyor.model.dto.LoanOfferDTO;
@@ -47,7 +46,7 @@ public class ConveyorController {
             @ApiResponse(responseCode = "500", description = "Server error")
     })
     @PostMapping("/conveyor/calculation")
-    public ResponseEntity<CreditDTO> finalScoring(@Valid @RequestBody ScoringDataDTO scoringData) throws FailedScoringException {
+    public ResponseEntity<CreditDTO> finalScoring(@Valid @RequestBody ScoringDataDTO scoringData) {
         CreditDTO credit = scoringService.scoring(scoringData);
         return ResponseEntity.ok(credit);
     }

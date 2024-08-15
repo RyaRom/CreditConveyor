@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage serverError(Exception exception, WebRequest request) {
+        log.error("Unexpected error {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .timestamp(new Date())
