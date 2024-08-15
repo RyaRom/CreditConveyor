@@ -71,7 +71,7 @@ public class ApplicationService {
         else history = application.getStatus_history_id();
         history.add(update);
 
-        log.info("Updated status to {}: {}", status, application.getApplication_id());
+        log.info("Updated status to {}. Application id: {}", status, application.getApplication_id());
         application.setStatus_history_id(history);
     }
 
@@ -81,30 +81,6 @@ public class ApplicationService {
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
         application.setApplied_offer(loanOffer);
         applicationRepo.save(application);
-    }
-
-    private ScoringDataDTO mapScoringData(FinishRegistrationRequestDTO request, Application application) {
-        LoanOffer offer = application.getApplied_offer();
-        Client client = application.getClient_id();
-        return ScoringDataDTO.builder()
-                .amount(offer.getRequestedAmount())
-                .term(offer.getTerm())
-                .firstName(client.getFirst_name())
-                .middleName(client.getMiddle_name())
-                .lastName(client.getLast_name())
-                .gender(request.getGender())
-                .birthdate(client.getBirth_date())
-                .passportSeries(client.getPassport_id().getSeries())
-                .passportNumber(client.getPassport_id().getNumber())
-                .passportIssueBranch(request.getPassportIssueBranch())
-                .passportIssueDate(request.getPassportIssueDate())
-                .maritalStatus(request.getMaritalStatus())
-                .dependentAmount(request.getDependentAmount())
-                .employment(request.getEmployment())
-                .account(request.getAccount())
-                .isInsuranceEnabled(offer.getIsInsuranceEnabled())
-                .isSalaryClient(offer.getIsSalaryClient())
-                .build();
     }
 
     private void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
@@ -124,7 +100,7 @@ public class ApplicationService {
 
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
         Application application = applicationRepo.getByApplication_id(applicationId);
-        ScoringDataDTO scoringData = mapScoringData(finishRegistrationRequestDTO, application);
+        ScoringDataDTO scoringData = applicationRequestMapper.mapScoringData(finishRegistrationRequestDTO, application);
         log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
 
@@ -145,6 +121,5 @@ public class ApplicationService {
 
         updateApplicationStatus(application, ApplicationStatus.CC_APPROVED);
         applicationRepo.save(application);
-        creditRepo.save(credit);
     }
 }
