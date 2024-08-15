@@ -49,8 +49,8 @@ public class ScoringService {
                 .monthlyPayment(monthlyPayment)
                 .paymentSchedule(payments)
                 .build();
-        log.info("\nCredit created {}\n For person {} ", credit.toString(), scoringData.getAccount());
-        log.info("\nPayment schedule {}", payments);
+        log.info("Credit created {} For person {} ", credit.toString(), scoringData.getAccount());
+        log.info("Payment schedule {}", payments);
         return credit;
     }
 
