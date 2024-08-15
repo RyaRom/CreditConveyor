@@ -14,7 +14,6 @@ import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
-import com.deal.repo.CreditRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ public class ApplicationService {
     private final ConveyorClient conveyorClient;
     private final ApplicationRequestMapper applicationRequestMapper;
     private final ClientRepo clientRepo;
-    private final CreditRepo creditRepo;
     private final ApplicationRepo applicationRepo;
 
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
@@ -53,7 +51,7 @@ public class ApplicationService {
         Application application = new Application();
         application.setClient_id(client);
         application.setCreation_date(LocalDateTime.now());
-        updateApplicationStatus(application, ApplicationStatus.DOCUMENT_CREATED);
+        updateApplicationStatus(application, ApplicationStatus.PREAPPROVAL);
 
         return application;
     }
@@ -77,7 +75,7 @@ public class ApplicationService {
 
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
         Application application = applicationRepo.getByApplication_id(loanOfferDTO.getApplicationId());
-        updateApplicationStatus(application, ApplicationStatus.PREAPPROVAL);
+        updateApplicationStatus(application, ApplicationStatus.APPROVED);
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
         application.setApplied_offer(loanOffer);
         applicationRepo.save(application);
