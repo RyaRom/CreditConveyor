@@ -1,9 +1,9 @@
 package com.deal.model.mapping;
 
-import com.deal.model.dto.EmploymentDTO;
-import com.deal.model.dto.LoanApplicationRequestDTO;
-import com.deal.model.dto.LoanOfferDTO;
+import com.deal.model.dto.*;
 import com.deal.model.entities.Client;
+import com.deal.model.entities.Credit;
+import com.deal.model.entities.PaymentScheduleElement;
 import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
 import org.mapstruct.Mapper;
@@ -31,4 +31,14 @@ public interface ApplicationRequestMapper {
             @Mapping(source = "workExperienceCurrent", target = "work_experience_current")
     })
     Employment toEmploymentJsonb(EmploymentDTO employmentDTO);
+
+    @Mappings({
+            @Mapping(source = "monthlyPayment", target = "monthly_payment"),
+            @Mapping(source = "isInsuranceEnabled", target = "insurance_enable"),
+            @Mapping(source = "isSalaryClient", target = "salary_client"),
+            @Mapping(source = "paymentSchedule", target = "payment_schedule")
+    })
+    Credit toCredit(CreditDTO creditDTO);
+
+    PaymentScheduleElement toSchedule(PaymentScheduleElementDTO paymentScheduleElementDTO);
 }

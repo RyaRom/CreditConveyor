@@ -30,6 +30,7 @@ public class DealController {
 
     @PutMapping("/deal/calculate/{applicationId}")
     public ResponseEntity<Void> calculateCredit(@RequestBody FinishRegistrationRequestDTO finishRegistrationRequestDTO, @PathVariable Long applicationId) {
+        applicationService.applicationScoring(finishRegistrationRequestDTO, applicationId);
         return ResponseEntity.noContent().build();
     }
 }

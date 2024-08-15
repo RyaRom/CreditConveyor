@@ -4,17 +4,21 @@ import com.deal.config.ConveyorClient;
 import com.deal.model.dto.*;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;
+import com.deal.model.entities.Credit;
 import com.deal.model.enums.ApplicationStatus;
 import com.deal.model.enums.ChangeType;
+import com.deal.model.enums.CreditStatus;
 import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
 import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
+import com.deal.repo.CreditRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ public class ApplicationService {
     private final ConveyorClient conveyorClient;
     private final ApplicationRequestMapper applicationRequestMapper;
     private final ClientRepo clientRepo;
+    private final CreditRepo creditRepo;
     private final ApplicationRepo applicationRepo;
 
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
@@ -66,6 +71,7 @@ public class ApplicationService {
         else history = application.getStatus_history_id();
         history.add(update);
 
+        log.info("Updated status to {}: {}", status, application.getApplication_id());
         application.setStatus_history_id(history);
     }
 
@@ -77,13 +83,27 @@ public class ApplicationService {
         applicationRepo.save(application);
     }
 
-    private ScoringDataDTO mapScoringData(FinishRegistrationRequestDTO request) {
+    private ScoringDataDTO mapScoringData(FinishRegistrationRequestDTO request, Application application) {
+        LoanOffer offer = application.getApplied_offer();
+        Client client = application.getClient_id();
         return ScoringDataDTO.builder()
+                .amount(offer.getRequestedAmount())
+                .term(offer.getTerm())
+                .firstName(client.getFirst_name())
+                .middleName(client.getMiddle_name())
+                .lastName(client.getLast_name())
                 .gender(request.getGender())
+                .birthdate(client.getBirth_date())
+                .passportSeries(client.getPassport_id().getSeries())
+                .passportNumber(client.getPassport_id().getNumber())
+                .passportIssueBranch(request.getPassportIssueBranch())
+                .passportIssueDate(request.getPassportIssueDate())
                 .maritalStatus(request.getMaritalStatus())
                 .dependentAmount(request.getDependentAmount())
                 .employment(request.getEmployment())
                 .account(request.getAccount())
+                .isInsuranceEnabled(offer.getIsInsuranceEnabled())
+                .isSalaryClient(offer.getIsSalaryClient())
                 .build();
     }
 
@@ -104,11 +124,27 @@ public class ApplicationService {
 
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
         Application application = applicationRepo.getByApplication_id(applicationId);
-        ScoringDataDTO scoringData = mapScoringData(finishRegistrationRequestDTO);
+        ScoringDataDTO scoringData = mapScoringData(finishRegistrationRequestDTO, application);
+        log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
 
-        CreditDTO creditDTO = conveyorClient.calculateCredit(scoringData);
-        //TODO: failed scoring case
-        //TODO: success scoring case
+        CreditDTO creditDTO;
+        try {
+            creditDTO = conveyorClient.calculateCredit(scoringData);
+        } catch (ResponseStatusException e) {
+            log.info("Failed scoring: {}", applicationId);
+            updateApplicationStatus(application, ApplicationStatus.CC_DENIED);
+            applicationRepo.save(application);
+            return;
+        }
+
+        log.info("Response from conveyor: credit {}", creditDTO.toString());
+        Credit credit = applicationRequestMapper.toCredit(creditDTO);
+        credit.setCredit_status(CreditStatus.CALCULATED);
+        application.setCredit_id(credit);
+
+        updateApplicationStatus(application, ApplicationStatus.CC_APPROVED);
+        applicationRepo.save(application);
+        creditRepo.save(credit);
     }
 }
