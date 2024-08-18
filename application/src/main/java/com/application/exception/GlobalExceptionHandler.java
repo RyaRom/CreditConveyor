@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage failedFeignRequest(MethodArgumentNotValidException exception, WebRequest request) {
+    public ErrorMessage failedFeignRequest(ResponseStatusException exception, WebRequest request) {
         log.error("Failed deal MC request {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
