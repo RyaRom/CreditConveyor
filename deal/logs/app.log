@@ -1,2 +1,0 @@
-2024-08-19 00:07:58 INFO  com.deal.service.ApplicationService - Updated status to DOCUMENT_CREATED: null
-2024-08-19 00:08:20 ERROR c.d.exception.GlobalExceptionHandler - Failed conveyor request 400 BAD_REQUEST "Invalid request or scoring error: http://localhost:8080/conveyor/offers"
