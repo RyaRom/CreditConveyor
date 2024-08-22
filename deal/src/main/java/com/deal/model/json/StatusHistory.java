@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 public class StatusHistory {
     private ApplicationStatus status;
     private LocalDateTime time;
-    private ChangeType change_type;
+    private ChangeType changeType;
 }

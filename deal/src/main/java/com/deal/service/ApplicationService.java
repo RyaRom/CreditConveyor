@@ -1,6 +1,6 @@
 package com.deal.service;
 
-import com.deal.config.ConveyorClient;
+import com.deal.client.ConveyorClient;
 import com.deal.model.dto.*;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;

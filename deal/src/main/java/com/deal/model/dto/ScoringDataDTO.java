@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -19,7 +20,7 @@ public class ScoringDataDTO {
     @Schema(description = "Requested loan amount.", example = "1000000", minimum = "10000")
     @NotNull
     @Min(10000)
-    private Double amount;
+    private BigDecimal amount;
 
     @Schema(description = "Requested loan term (months).", example = "24", minimum = "6")
     @NotNull

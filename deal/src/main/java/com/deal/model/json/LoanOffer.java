@@ -3,14 +3,16 @@ package com.deal.model.json;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class LoanOffer {
     private Long applicationId;
-    private Double requestedAmount;
-    private Double totalAmount;
+    private BigDecimal requestedAmount;
+    private BigDecimal totalAmount;
     private Integer term;
-    private Double monthlyPayment;
+    private BigDecimal monthlyPayment;
     private Double rate;
     private Boolean isInsuranceEnabled;
     private Boolean isSalaryClient;

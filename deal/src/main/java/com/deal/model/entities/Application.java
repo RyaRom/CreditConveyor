@@ -18,21 +18,22 @@ import java.util.List;
 public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long application_id;
+    private Long applicationId;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_id")
-    private Client client_id;
+    private Client clientId;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "credit_id")
-    private Credit credit_id;
+    private Credit creditId;
+    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
-    private LocalDateTime creation_date;
-    private LocalDateTime sign_date;
+    private LocalDateTime creationDate;
+    private LocalDateTime signDate;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private LoanOffer applied_offer;
-    private String sec_code;
+    private LoanOffer appliedOffer;
+    private String secCode;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private List<StatusHistory> status_history_id;
+    private List<StatusHistory> statusHistoryId;
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -15,11 +16,11 @@ import java.time.LocalDate;
 public class PaymentScheduleElement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long schedule_element_id;
+    private Long scheduleElementId;
     private Integer number;
     private LocalDate date;
-    private Double totalPayment;
-    private Double interestPayment;
-    private Double debtPayment;
-    private Double remainingDebt;
+    private BigDecimal totalPayment;
+    private BigDecimal interestPayment;
+    private BigDecimal debtPayment;
+    private BigDecimal remainingDebt;
 }

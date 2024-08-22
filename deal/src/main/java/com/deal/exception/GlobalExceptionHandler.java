@@ -16,11 +16,11 @@ import java.util.Date;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage requestValidation(MethodArgumentNotValidException exception, WebRequest request) {
-        log.warn("Failed prescoring {}", exception.getMessage());
+        log.warn("Error in application MC: {}", exception.getMessage());
         return ErrorMessage.builder()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .timestamp(new Date())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))

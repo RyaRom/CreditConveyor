@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @Schema(title = "Employment", description = "Client's employment info.")
@@ -20,10 +22,10 @@ public class EmploymentDTO {
 
     @Schema(description = "Client's employer's INN.", example = "123456789012", pattern = "[0-9]{12}")
     @Pattern(regexp = "[0-9]{12}")
-    private String employerINN;
+    private String employerInn;
 
     @Schema(description = "Client's salary.", example = "100000.00")
-    private Double salary;
+    private BigDecimal salary;
 
     @Schema(description = "Client's employment position.", example = "WORKER")
     private Position position;

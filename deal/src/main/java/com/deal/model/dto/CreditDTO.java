@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -12,13 +13,13 @@ import java.util.List;
 public class CreditDTO {
 
     @Schema(description = "Requested loan amount.", example = "1000000.00")
-    private Double amount;
+    private BigDecimal amount;
 
     @Schema(description = "Requested loan term (months).", example = "24")
     private Integer term;
 
     @Schema(description = "Monthly payment.", example = "10000.10")
-    private Double monthlyPayment;
+    private BigDecimal monthlyPayment;
 
     @Schema(description = "Loan rate.", example = "12.50")
     private Double rate;

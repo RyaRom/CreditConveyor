@@ -5,13 +5,15 @@ import com.deal.model.enums.Position;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class Employment {
     private EmploymentStatus status;
-    private String employment_inn;
-    private Double salary;
+    private String employmentInn;
+    private BigDecimal salary;
     private Position position;
-    private Integer work_experience_total;
-    private Integer work_experience_current;
+    private Integer workExperienceTotal;
+    private Integer workExperienceCurrent;
 }

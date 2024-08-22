@@ -18,20 +18,22 @@ import java.time.LocalDate;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long client_id;
-    private String last_name;
-    private String first_name;
-    private String middle_name;
-    private LocalDate birth_date;
+    private Long clientId;
+    private String lastName;
+    private String firstName;
+    private String middleName;
+    private LocalDate birthDate;
     private String email;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
-    private MaritalStatus marital_status;
-    private Integer dependent_amount;
+    @Enumerated(EnumType.STRING)
+    private MaritalStatus maritalStatus;
+    private Integer dependentAmount;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private Passport passport_id;
+    private Passport passportId;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private Employment employment_id;
+    private Employment employmentId;
     private String account;
 }

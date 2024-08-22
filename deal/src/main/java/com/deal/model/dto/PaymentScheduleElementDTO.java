@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -18,14 +19,14 @@ public class PaymentScheduleElementDTO {
     private LocalDate date;
 
     @Schema(description = "Total payment amount.", example = "12000.00")
-    private Double totalPayment;
+    private BigDecimal totalPayment;
 
     @Schema(description = "Interest payment amount.", example = "12000.00")
-    private Double interestPayment;
+    private BigDecimal interestPayment;
 
     @Schema(description = "Main debt payment amount.", example = "8000.00")
-    private Double debtPayment;
+    private BigDecimal debtPayment;
 
     @Schema(description = "Remaining debt amount.", example = "92000.00")
-    private Double remainingDebt;
+    private BigDecimal remainingDebt;
 }

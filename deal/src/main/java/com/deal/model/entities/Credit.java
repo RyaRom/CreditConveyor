@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -13,15 +14,16 @@ import java.util.List;
 public class Credit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long credit_id;
-    private Double amount;
+    private Long creditId;
+    private BigDecimal amount;
     private Integer term;
-    private Double monthly_payment;
+    private BigDecimal monthlyPayment;
     private Double psk;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "credit_id")
-    private List<PaymentScheduleElement> payment_schedule;
-    private Boolean insurance_enable;
-    private Boolean salary_client;
-    private CreditStatus credit_status;
+    private List<PaymentScheduleElement> paymentSchedule;
+    private Boolean insuranceEnable;
+    private Boolean salaryClient;
+    @Enumerated(EnumType.STRING)
+    private CreditStatus creditStatus;
 }
