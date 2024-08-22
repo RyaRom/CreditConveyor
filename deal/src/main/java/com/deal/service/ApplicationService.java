@@ -14,6 +14,7 @@ import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ApplicationService {
     private final ClientRepo clientRepo;
     private final ApplicationRepo applicationRepo;
 
+    @Transactional
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         Client client = applicationRequestMapper.toClient(loanApplicationRequestDTO);
         Application application = createApplication(client);
@@ -41,7 +43,7 @@ public class ApplicationService {
 
         List<LoanOfferDTO> offers = conveyorClient.createOffers(loanApplicationRequestDTO);
         log.info("Response from conveyor MC: {}", offers);
-        Long id = application.getApplication_id();
+        Long id = application.getApplicationId();
         offers.forEach(offer -> offer.setApplicationId(id));
 
         return offers;
@@ -49,8 +51,8 @@ public class ApplicationService {
 
     private Application createApplication(Client client) {
         Application application = new Application();
-        application.setClient_id(client);
-        application.setCreation_date(LocalDateTime.now());
+        application.setClientId(client);
+        application.setCreationDate(LocalDateTime.now());
         updateApplicationStatus(application, ApplicationStatus.PREAPPROVAL);
 
         return application;
@@ -62,42 +64,48 @@ public class ApplicationService {
         StatusHistory update = new StatusHistory();
         update.setStatus(status);
         update.setTime(LocalDateTime.now());
-        update.setChange_type(ChangeType.AUTOMATIC);
+        update.setChangeType(ChangeType.AUTOMATIC);
 
         List<StatusHistory> history;
-        if (application.getStatus_history_id() == null) history = new ArrayList<>();
-        else history = application.getStatus_history_id();
+        if (application.getStatusHistoryId() == null) {
+            history = new ArrayList<>();
+        } else {
+            history = application.getStatusHistoryId();
+        }
         history.add(update);
 
-        log.info("Updated status to {}. Application id: {}", status, application.getApplication_id());
-        application.setStatus_history_id(history);
+        log.info("Updated status to {}. Application id: {}", status, application.getApplicationId());
+        application.setStatusHistoryId(history);
     }
 
+    @Transactional
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
-        Application application = applicationRepo.getByApplication_id(loanOfferDTO.getApplicationId());
+        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId());
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
-        application.setApplied_offer(loanOffer);
+        application.setAppliedOffer(loanOffer);
         applicationRepo.save(application);
     }
 
-    private void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
-        Client client = application.getClient_id();
+    @Transactional
+    protected void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
+        Client client = application.getClientId();
         client.setGender(request.getGender());
-        client.setMarital_status(request.getMaritalStatus());
-        client.setDependent_amount(request.getDependentAmount());
-        client.getPassport_id().setIssue_date(request.getPassportIssueDate());
-        client.getPassport_id().setIssue_branch(request.getPassportIssueBranch());
+        client.setMaritalStatus(request.getMaritalStatus());
+        client.setDependentAmount(request.getDependentAmount());
+        client.getPassportId().setIssueDate(request.getPassportIssueDate());
+        client.getPassportId().setIssueBranch(request.getPassportIssueBranch());
         client.setAccount(request.getAccount());
 
         Employment employment = applicationRequestMapper.toEmploymentJsonb(request.getEmployment());
-        client.setEmployment_id(employment);
+        client.setEmploymentId(employment);
 
         clientRepo.save(client);
     }
 
+    @Transactional
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
-        Application application = applicationRepo.getByApplication_id(applicationId);
+        Application application = applicationRepo.getByApplicationId(applicationId);
         ScoringDataDTO scoringData = applicationRequestMapper.mapScoringData(finishRegistrationRequestDTO, application);
         log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
@@ -114,8 +122,8 @@ public class ApplicationService {
 
         log.info("Response from conveyor: credit {}", creditDTO.toString());
         Credit credit = applicationRequestMapper.toCredit(creditDTO);
-        credit.setCredit_status(CreditStatus.CALCULATED);
-        application.setCredit_id(credit);
+        credit.setCreditStatus(CreditStatus.CALCULATED);
+        application.setCreditId(credit);
 
         updateApplicationStatus(application, ApplicationStatus.CC_APPROVED);
         applicationRepo.save(application);

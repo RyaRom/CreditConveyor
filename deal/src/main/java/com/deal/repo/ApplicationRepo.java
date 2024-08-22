@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepo extends JpaRepository<Application, Long> {
-    @Query("SELECT a FROM Application a WHERE a.application_id = :application_id")
-    Application getByApplication_id(@Param("application_id") Long application_id);
+    Application getByApplicationId(@Param("application_id") Long application_id);
 }
