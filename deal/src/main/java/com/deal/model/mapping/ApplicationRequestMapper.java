@@ -42,16 +42,16 @@ public interface ApplicationRequestMapper {
             @Mapping(source = "request.dependentAmount", target = "dependentAmount"),
             @Mapping(source = "request.employment", target = "employment"),
             @Mapping(source = "request.account", target = "account"),
-            @Mapping(source = "application.applied_offer.requestedAmount", target = "amount"),
-            @Mapping(source = "application.applied_offer.term", target = "term"),
-            @Mapping(source = "application.clientId.first_name", target = "firstName"),
-            @Mapping(source = "application.clientId.middle_name", target = "middleName"),
-            @Mapping(source = "application.clientId.last_name", target = "lastName"),
-            @Mapping(source = "application.clientId.birth_date", target = "birthdate"),
+            @Mapping(source = "application.appliedOffer.requestedAmount", target = "amount"),
+            @Mapping(source = "application.appliedOffer.term", target = "term"),
+            @Mapping(source = "application.clientId.firstName", target = "firstName"),
+            @Mapping(source = "application.clientId.middleName", target = "middleName"),
+            @Mapping(source = "application.clientId.lastName", target = "lastName"),
+            @Mapping(source = "application.clientId.birthdate", target = "birthdate"),
             @Mapping(source = "application.clientId.passportId.series", target = "passportSeries"),
             @Mapping(source = "application.clientId.passportId.number", target = "passportNumber"),
-            @Mapping(source = "application.applied_offer.isInsuranceEnabled", target = "isInsuranceEnabled"),
-            @Mapping(source = "application.applied_offer.isSalaryClient", target = "isSalaryClient")
+            @Mapping(source = "application.appliedOffer.isInsuranceEnabled", target = "isInsuranceEnabled"),
+            @Mapping(source = "application.appliedOffer.isSalaryClient", target = "isSalaryClient")
     })
     ScoringDataDTO mapScoringData(FinishRegistrationRequestDTO request, Application application);
 }

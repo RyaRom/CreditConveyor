@@ -26,7 +26,7 @@ public class Credit {
     private BigDecimal amount;
     private Integer term;
     private BigDecimal monthlyPayment;
-    private Double psk;
+    private BigDecimal psk;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "credit_id")
     private List<PaymentScheduleElement> paymentSchedule;

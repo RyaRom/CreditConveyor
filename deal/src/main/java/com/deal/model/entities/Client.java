@@ -28,7 +28,7 @@ public class Client {
     private String lastName;
     private String firstName;
     private String middleName;
-    private LocalDate birthDate;
+    private LocalDate birthdate;
     private String email;
     @Enumerated(EnumType.STRING)
     private Gender gender;

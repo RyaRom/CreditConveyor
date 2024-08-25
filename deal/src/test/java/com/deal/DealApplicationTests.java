@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DealApplicationTests {
 
     private final LoanApplicationRequestDTO validRequest = LoanApplicationRequestDTO.builder()
-            .amount(1000000.0)
+            .amount(BigDecimal.valueOf(1000000.0))
             .term(24)
             .firstName("Ivan")
             .lastName("Ivanov")
@@ -33,7 +34,7 @@ class DealApplicationTests {
             .build();
 
     private final LoanApplicationRequestDTO invalidRequest = LoanApplicationRequestDTO.builder()
-            .amount(-200.0)
+            .amount(BigDecimal.valueOf(-200.0))
             .term(24)
             .firstName("Ivan")
             .lastName("Ivanov")
