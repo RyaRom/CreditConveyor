@@ -244,7 +244,7 @@ class DealApplicationTests {
         assertNotNull(client);
         assertEquals(application.getStatus(), ApplicationStatus.PREAPPROVAL);
         assertEquals(application.getStatusHistoryId().size(), 1);
-        assertEquals(client.getPassportId().getSeries(), validRequest.getPassportSeries());
+        assertEquals(client.getPassportId().series(), validRequest.getPassportSeries());
         assertEquals(client.getFirstName(), validRequest.getFirstName());
         assertEquals(client.getMiddleName(), validRequest.getMiddleName());
         assertEquals(client.getLastName(), validRequest.getLastName());

@@ -14,6 +14,7 @@ import com.deal.model.enums.ChangeType;
 import com.deal.model.enums.CreditStatus;
 import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
+import com.deal.model.json.Passport;
 import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
@@ -65,10 +66,7 @@ public class ApplicationService {
     private void updateApplicationStatus(Application application, ApplicationStatus status) {
         application.setStatus(status);
 
-        StatusHistory update = new StatusHistory();
-        update.setStatus(status);
-        update.setTime(LocalDateTime.now());
-        update.setChangeType(ChangeType.AUTOMATIC);
+        StatusHistory update = new StatusHistory(status, LocalDateTime.now(), ChangeType.AUTOMATIC);
 
         List<StatusHistory> history;
         if (application.getStatusHistoryId() == null) {
@@ -94,11 +92,17 @@ public class ApplicationService {
     @Transactional
     protected void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
         Client client = application.getClientId();
+        Passport passport = new Passport(
+                client.getPassportId().series(),
+                client.getPassportId().number(),
+                request.getPassportIssueBranch(),
+                request.getPassportIssueDate()
+        );
+
         client.setGender(request.getGender());
         client.setMaritalStatus(request.getMaritalStatus());
         client.setDependentAmount(request.getDependentAmount());
-        client.getPassportId().setIssueDate(request.getPassportIssueDate());
-        client.getPassportId().setIssueBranch(request.getPassportIssueBranch());
+        client.setPassportId(passport);
         client.setAccount(request.getAccount());
 
         Employment employment = applicationRequestMapper.toEmploymentJsonb(request.getEmployment());
