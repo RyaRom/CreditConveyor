@@ -37,7 +37,7 @@ public class LoanOfferDTO {
 
     @Schema(description = "Loan rate", example = "12.50")
     @NotNull
-    private Double rate;
+    private BigDecimal rate;
 
     @Schema(description = "Is insurance enabled?", example = "true")
     @NotNull

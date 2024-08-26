@@ -1,10 +1,14 @@
 package com.deal.model.mapping;
 
-import com.deal.model.dto.*;
+import com.deal.model.dto.CreditDTO;
+import com.deal.model.dto.EmploymentDTO;
+import com.deal.model.dto.FinishRegistrationRequestDTO;
+import com.deal.model.dto.LoanApplicationRequestDTO;
+import com.deal.model.dto.LoanOfferDTO;
+import com.deal.model.dto.ScoringDataDTO;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;
 import com.deal.model.entities.Credit;
-import com.deal.model.entities.PaymentScheduleElement;
 import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
 import org.mapstruct.Mapper;
@@ -31,8 +35,6 @@ public interface ApplicationRequestMapper {
             @Mapping(source = "isSalaryClient", target = "salaryClient"),
     })
     Credit toCredit(CreditDTO creditDTO);
-
-    PaymentScheduleElement toSchedule(PaymentScheduleElementDTO paymentScheduleElementDTO);
 
     @Mappings({
             @Mapping(source = "request.gender", target = "gender"),

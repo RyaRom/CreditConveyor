@@ -1,7 +1,11 @@
 package com.deal.service;
 
 import com.deal.client.ConveyorClient;
-import com.deal.model.dto.*;
+import com.deal.model.dto.CreditDTO;
+import com.deal.model.dto.FinishRegistrationRequestDTO;
+import com.deal.model.dto.LoanApplicationRequestDTO;
+import com.deal.model.dto.LoanOfferDTO;
+import com.deal.model.dto.ScoringDataDTO;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;
 import com.deal.model.entities.Credit;

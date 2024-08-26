@@ -22,10 +22,10 @@ public class CreditDTO {
     private BigDecimal monthlyPayment;
 
     @Schema(description = "Loan rate.", example = "12.50")
-    private Double rate;
+    private BigDecimal rate;
 
     @Schema(description = "Loan Full Price.", example = "12.50")
-    private Double psk;
+    private BigDecimal psk;
 
     @Schema(description = "Is insurance enabled?", example = "true")
     private Boolean isInsuranceEnabled;
