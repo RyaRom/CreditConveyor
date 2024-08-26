@@ -33,6 +33,7 @@ public interface ApplicationRequestMapper {
     @Mappings({
             @Mapping(source = "isInsuranceEnabled", target = "insuranceEnable"),
             @Mapping(source = "isSalaryClient", target = "salaryClient"),
+            @Mapping(source = "psk", target = "psk"),
     })
     Credit toCredit(CreditDTO creditDTO);
 
