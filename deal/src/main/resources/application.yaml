@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: deal
+  datasource:
+    username: postgres
+    password: password
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    user: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+    enabled: true
+springdoc:
+  swagger-ui:
+    path: /deal/swagger-ui/
+server:
+  port: 8081
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
+feign:
+  url: http://localhost:8080
