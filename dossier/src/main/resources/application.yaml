@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: dossier
+
+server:
+  port: 8083
+springdoc:
+  swagger-ui:
+    path: /dossier/swagger-ui/
