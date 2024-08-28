@@ -1,7 +1,19 @@
 spring:
   application:
     name: dossier
-
+  mail:
+    host: smtp.yandex.com
+    port: 465
+    username: credit.conveyor.app@yandex.ru
+    password: gbvbigkpedhojyfx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
 server:
   port: 8083
 springdoc:

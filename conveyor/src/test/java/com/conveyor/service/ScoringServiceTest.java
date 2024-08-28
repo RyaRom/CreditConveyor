@@ -59,6 +59,7 @@ class ScoringServiceTest {
             .dependentAmount(1)
             .gender(Gender.MALE)
             .build();
+
     @InjectMocks
     private ScoringService scoringService;
 
