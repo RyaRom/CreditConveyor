@@ -1,4 +1,4 @@
-package exception;
+package com.dossier.exception;
 
 import lombok.Builder;
 import lombok.Data;

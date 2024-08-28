@@ -1,4 +1,4 @@
-package exception;
+package com.dossier.exception;
 
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;

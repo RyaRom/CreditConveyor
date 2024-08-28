@@ -1,4 +1,4 @@
-package service;
+package com.dossier.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
