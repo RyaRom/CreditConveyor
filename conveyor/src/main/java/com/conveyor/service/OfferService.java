@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OfferService {
+
     private final ScoringService scoringService;
 
     public List<LoanOfferDTO> createOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {

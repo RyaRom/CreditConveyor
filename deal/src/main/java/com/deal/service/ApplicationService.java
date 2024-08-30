@@ -1,6 +1,8 @@
 package com.deal.service;
 
 import com.deal.client.ConveyorClient;
+import com.deal.kafka.EmailProducer;
+import com.deal.kafka.KafkaTopic;
 import com.deal.model.dto.CreditDTO;
 import com.deal.model.dto.FinishRegistrationRequestDTO;
 import com.deal.model.dto.LoanApplicationRequestDTO;
@@ -32,13 +34,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ApplicationService {
+
     private final ConveyorClient conveyorClient;
+
     private final ApplicationRequestMapper applicationRequestMapper;
+
     private final ClientRepo clientRepo;
+
     private final ApplicationRepo applicationRepo;
 
-    @Transactional
+    private final EmailProducer emailProducer;
+
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         Client client = applicationRequestMapper.toClient(loanApplicationRequestDTO);
         Application application = createApplication(client);
@@ -66,7 +74,7 @@ public class ApplicationService {
     private void updateApplicationStatus(Application application, ApplicationStatus status) {
         application.setStatus(status);
 
-        StatusHistory update = new StatusHistory(status, LocalDateTime.now(), ChangeType.AUTOMATIC);
+        StatusHistory update = new StatusHistory(status, LocalDateTime.now(), ChangeType.MANUAL);
 
         List<StatusHistory> history;
         if (application.getStatusHistoryId() == null) {
@@ -80,16 +88,15 @@ public class ApplicationService {
         application.setStatusHistoryId(history);
     }
 
-    @Transactional
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
-        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId());
+        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow();
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
         application.setAppliedOffer(loanOffer);
         applicationRepo.save(application);
+        emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.FINISH_REGISTRATION, application.getApplicationId());
     }
 
-    @Transactional
     protected void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
         Client client = application.getClientId();
         Passport passport = new Passport(
@@ -111,9 +118,8 @@ public class ApplicationService {
         clientRepo.save(client);
     }
 
-    @Transactional
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId);
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow();
         ScoringDataDTO scoringData = applicationRequestMapper.mapScoringData(finishRegistrationRequestDTO, application);
         log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
@@ -135,5 +141,13 @@ public class ApplicationService {
 
         updateApplicationStatus(application, ApplicationStatus.CC_APPROVED);
         applicationRepo.save(application);
+        emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREATE_DOCUMENTS, applicationId);
+    }
+
+    public void sendDocuments(Long applicationId) {
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow();
+        updateApplicationStatus(application, ApplicationStatus.PREPARE_DOCUMENTS);
+        applicationRepo.save(application);
+        emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_DOCUMENTS, applicationId);
     }
 }

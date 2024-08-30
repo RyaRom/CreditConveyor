@@ -11,28 +11,30 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @Tag(name = "Deal conveyor")
+@RequestMapping("/deal")
 @RequiredArgsConstructor
 public class DealController {
     private final ApplicationService applicationService;
 
-    @PostMapping("/deal/application")
+    @PostMapping("/application")
     public ResponseEntity<List<LoanOfferDTO>> generateOffers(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
         return ResponseEntity.ok(applicationService.generateOffers(loanApplicationRequestDTO));
     }
 
-    @PutMapping("/deal/offer")
+    @PutMapping("/offer")
     public ResponseEntity<Void> pickOffer(@RequestBody LoanOfferDTO loanOfferDTO) {
         applicationService.updateApplication(loanOfferDTO);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/deal/calculate/{applicationId}")
+    @PutMapping("/calculate/{applicationId}")
     public ResponseEntity<Void> calculateCredit(@RequestBody FinishRegistrationRequestDTO finishRegistrationRequestDTO, @PathVariable Long applicationId) {
         applicationService.applicationScoring(finishRegistrationRequestDTO, applicationId);
         return ResponseEntity.noContent().build();

@@ -1,5 +1,6 @@
 package com.deal.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,7 +21,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage requestValidation(MethodArgumentNotValidException exception, WebRequest request) {
-        log.warn("Error in application MC: {}", exception.getMessage());
+        log.warn("Incorrect email in message: {}", exception.getMessage());
+        return ErrorMessage.builder()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .timestamp(new Date())
+                .message(exception.getMessage())
+                .description(request.getDescription(true))
+                .build();
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage requestValidation(NoSuchElementException exception, WebRequest request) {
+        log.warn("No such application: {}", exception.getMessage());
+        return ErrorMessage.builder()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .timestamp(new Date())
+                .message(exception.getMessage())
+                .description(request.getDescription(true))
+                .build();
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage requestValidation(JsonProcessingException exception, WebRequest request) {
+        log.warn("Kafka json serialization error: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .timestamp(new Date())

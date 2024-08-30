@@ -25,7 +25,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class ConveyorController {
+
     private final OfferService offerService;
+
     private final ScoringService scoringService;
 
     @Operation(summary = "Create offer", description = "creates 4 credit offers")

@@ -18,12 +18,16 @@ import java.util.List;
 @Slf4j
 @Service
 public class ScoringService {
+
     @Value("${scoring.base-rate}")
     private Double baseRate;
+
     @Value("${scoring.insurance-discount}")
     private Double insuranceDiscount;
+
     @Value("${scoring.insurance-cost}")
     private Double insuranceCost;
+
     @Value("${scoring.salary-client-discount}")
     private Double salaryClientDiscount;
 
