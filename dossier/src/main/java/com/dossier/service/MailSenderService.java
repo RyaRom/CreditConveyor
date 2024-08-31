@@ -4,6 +4,8 @@ import com.dossier.client.DealClient;
 import com.dossier.kafka.EmailMessage;
 import com.dossier.kafka.KafkaTopic;
 import com.dossier.model.dto.ApplicationDTO;
+import com.dossier.model.enums.ApplicationStatus;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,6 +14,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.util.Arrays;
+
 @Service
 @RequiredArgsConstructor
 public class MailSenderService {
@@ -19,6 +24,8 @@ public class MailSenderService {
     private final JavaMailSender sender;
 
     private final DealClient dealClient;
+
+    private final DocumentService documentService;
 
     @Value("${spring.mail.username}")
     private String serviceMail;
@@ -42,11 +49,21 @@ public class MailSenderService {
     @Value("${spring.mail.templates.send-ses}")
     private String sendSesMailTemplate;
 
+    @Value("${spring.mail.templates.document.credit-contract}")
+    private String creditContractTemplate;
+
     @SneakyThrows
-    public void sendMail(String to, String subject, String text) {
+    public void sendMail(String to, String subject, String text, File... attachments) {
         MimeMessage mimeMessage = sender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
+        Arrays.stream(attachments).forEach(file -> {
+            try {
+                helper.addAttachment(file.getName(), file);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        });
         helper.setFrom(serviceMail);
         helper.setTo(to);
         helper.setText(text);
@@ -61,18 +78,28 @@ public class MailSenderService {
 
         String text;
         switch (theme) {
-            case SEND_DOCUMENTS -> text = sendDocsMailTemplate.formatted(applicationId);
             case FINISH_REGISTRATION -> text = finishRegistrationMailTemplate.formatted(applicationId);
             case APPLICATION_DENIED -> text = applicationDeniedMailTemplate.formatted(applicationId);
+            case CREATE_DOCUMENTS -> text = createDocumentsMailTemplate.formatted(applicationId);
+            case CREDIT_ISSUED -> text = creditIssuedMailTemplate.formatted(applicationId);
             case SEND_SES -> {
                 ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
                 text = sendSesMailTemplate.formatted(applicationDTO.getSecCode(), applicationId);
             }
-            case CREDIT_ISSUED -> text = creditIssuedMailTemplate.formatted(applicationId);
-            case CREATE_DOCUMENTS -> text = createDocumentsMailTemplate.formatted(applicationId);
+            case SEND_DOCUMENTS -> {
+                ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
+                File creditContract = documentService.createDocument(creditContractTemplate, applicationDTO.getCredit(), applicationDTO.getClient());
+                text = sendDocsMailTemplate.formatted(applicationId);
+
+                dealClient.updateApplicationStatusById(applicationId, ApplicationStatus.DOCUMENT_CREATED.toString());
+
+                sendMail(address, theme.toString(), text, creditContract);
+            }
             default -> throw new RuntimeException("Error in mail service");
         }
 
-        sendMail(address, theme.toString(), text);
+        if (theme != KafkaTopic.SEND_DOCUMENTS) {
+            sendMail(address, theme.toString(), text);
+        }
     }
 }

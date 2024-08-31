@@ -9,6 +9,42 @@ spring:
       send-ses: " Ses code: %s. for application %s"
       application-denied: "Application denied email for application %s"
       credit-issued: "Credit issued for application %s"
+      document:
+        credit-contract: "Credit Contract
+
+Amount: {amount}
+Term: {term} months
+Monthly Payment: {monthlyPayment}
+PSK (Effective Annual Rate): {psk}%
+Insurance Enabled: {insuranceEnable}
+Salary Client: {salaryClient}
+
+Client Information:
+Client ID: {clientId}
+Full Name: {lastName} {firstName} {middleName}
+Birthdate: {birthdate}
+Email: {email}
+Gender: {gender}
+Marital Status: {maritalStatus}
+Dependents: {dependentAmount}
+
+Passport Information:
+Series: {passportSeries}
+Number: {passportNumber}
+Issue Branch: {passportIssueBranch}
+Issue Date: {passportIssueDate}
+
+Employment Information:
+Status: {employmentStatus}
+INN: {employmentInn}
+Salary: {employmentSalary}
+Position: {employmentPosition}
+Total Work Experience: {employmentWorkExperienceTotal} years
+Current Work Experience: {employmentWorkExperienceCurrent} years
+
+Payment Schedule:
+{paymentSchedule}
+"
     host: smtp.yandex.com
     port: 465
     username: credit.conveyor.app@yandex.ru
