@@ -1,4 +1,4 @@
-package com.deal.kafka;
+package com.dossier.kafka;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

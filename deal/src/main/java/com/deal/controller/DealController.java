@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@Tag(name = "Deal conveyor")
+@Tag(name = "Deal controller")
 @RequestMapping("/deal")
 @RequiredArgsConstructor
 public class DealController {
+
     private final ApplicationService applicationService;
 
     @PostMapping("/application")
@@ -31,12 +32,12 @@ public class DealController {
     @PutMapping("/offer")
     public ResponseEntity<Void> pickOffer(@RequestBody LoanOfferDTO loanOfferDTO) {
         applicationService.updateApplication(loanOfferDTO);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/calculate/{applicationId}")
     public ResponseEntity<Void> calculateCredit(@RequestBody FinishRegistrationRequestDTO finishRegistrationRequestDTO, @PathVariable Long applicationId) {
         applicationService.applicationScoring(finishRegistrationRequestDTO, applicationId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

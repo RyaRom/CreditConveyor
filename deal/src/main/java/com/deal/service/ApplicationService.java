@@ -21,14 +21,19 @@ import com.deal.model.json.StatusHistory;
 import com.deal.model.mapping.ApplicationRequestMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -46,6 +51,13 @@ public class ApplicationService {
     private final ApplicationRepo applicationRepo;
 
     private final EmailProducer emailProducer;
+
+    private String generateSESCode(int length) {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[length];
+        secureRandom.nextBytes(randomBytes);
+        return Base64.getUrlEncoder().encodeToString(randomBytes);
+    }
 
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         Client client = applicationRequestMapper.toClient(loanApplicationRequestDTO);
@@ -71,6 +83,22 @@ public class ApplicationService {
         return application;
     }
 
+    public void updateApplicationStatusById(Long applicationId, String status) {
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+        log.info("Update application {} to status {}", applicationId, status);
+
+        if (status.equals(ApplicationStatus.CLIENT_DENIED.toString())) {
+            log.info("Client denied for application {}", applicationId);
+            emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.APPLICATION_DENIED, applicationId);
+            updateApplicationStatus(application, ApplicationStatus.CLIENT_DENIED);
+            applicationRepo.save(application);
+            return;
+        }
+
+        updateApplicationStatus(application, ApplicationStatus.DOCUMENT_CREATED);
+        applicationRepo.save(application);
+    }
+
     private void updateApplicationStatus(Application application, ApplicationStatus status) {
         application.setStatus(status);
 
@@ -89,7 +117,7 @@ public class ApplicationService {
     }
 
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
-        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow();
+        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + loanOfferDTO.getApplicationId()));
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
         LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
         application.setAppliedOffer(loanOffer);
@@ -119,7 +147,7 @@ public class ApplicationService {
     }
 
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow();
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
         ScoringDataDTO scoringData = applicationRequestMapper.mapScoringData(finishRegistrationRequestDTO, application);
         log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
@@ -131,6 +159,7 @@ public class ApplicationService {
             log.info("Failed scoring: {}", applicationId);
             updateApplicationStatus(application, ApplicationStatus.CC_DENIED);
             applicationRepo.save(application);
+            emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.APPLICATION_DENIED, applicationId);
             return;
         }
 
@@ -145,9 +174,37 @@ public class ApplicationService {
     }
 
     public void sendDocuments(Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow();
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
         updateApplicationStatus(application, ApplicationStatus.PREPARE_DOCUMENTS);
         applicationRepo.save(application);
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_DOCUMENTS, applicationId);
+    }
+
+    public void signDocuments(Long applicationId) {
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+        String sesCode = generateSESCode(20);
+        application.setSecCode(sesCode);
+        log.info("Generated ses code {}\n For application {}", sesCode, applicationId);
+
+        applicationRepo.save(application);
+        emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_SES, applicationId);
+    }
+
+    @SneakyThrows
+    public void verifyCode(Long applicationId, String sesCode) {
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+
+        if (!application.getSecCode().equals(sesCode)) {
+            throw new AccessDeniedException("Ses code %s is wrong for application Id: %s".formatted(sesCode, applicationId));
+        }
+
+        updateApplicationStatus(application, ApplicationStatus.DOCUMENT_SIGNED);
+        applicationRepo.save(application);
+
+        application.getCreditId().setCreditStatus(CreditStatus.ISSUED);
+        updateApplicationStatus(application, ApplicationStatus.CREDIT_ISSUED);
+        applicationRepo.save(application);
+
+        emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREDIT_ISSUED, applicationId);
     }
 }

@@ -17,31 +17,41 @@ public class EmailConsumer {
     @KafkaListener(topics = "application-denied", groupId = "CreditConveyor")
     public void consumeApplicationDenied(String message) {
         log.info("Received application-denied message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
     }
 
     @KafkaListener(topics = "create-documents", groupId = "CreditConveyor")
     public void consumeCreateDocuments(String message) {
         log.info("Received create-documents message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
     }
 
     @KafkaListener(topics = "credit-issued", groupId = "CreditConveyor")
     public void consumeCreditIssued(String message) {
         log.info("Received credit-issued message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
+
     }
 
     @KafkaListener(topics = "finish-registration", groupId = "CreditConveyor")
     public void consumeFinishRegistration(String message) {
         log.info("Received finish-registration message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
+
     }
 
     @KafkaListener(topics = "send-documents", groupId = "CreditConveyor")
     public void consumeSendDocuments(String message) {
         log.info("Received send-documents message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
+
     }
 
     @KafkaListener(topics = "send-ses", groupId = "CreditConveyor")
     public void consumeSendSes(String message) {
         log.info("Received send-ses message: {}", message);
+        EmailMessage emailMessage = objectMapper.convertValue(message, EmailMessage.class);
+
     }
 }
 
