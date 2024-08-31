@@ -91,7 +91,7 @@ public class MailSenderService {
                 text = sendDocsMailTemplate.formatted(applicationId);
                 sendMail(address, theme.toString(), text, creditContract);
             }
-            default -> throw new RuntimeException("Error in mail service");
+            default -> throw new NullPointerException("Error in Kafka consumer");
         }
 
         if (theme != KafkaTopic.SEND_DOCUMENTS) {

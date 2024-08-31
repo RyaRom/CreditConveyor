@@ -225,4 +225,8 @@ public class ApplicationService {
         List<Application> applications = applicationRepo.findAll();
         return applications.stream().map(dataMapper::toApplicationDTO).toList();
     }
+
+    public void deleteApplicationById(Long applicationId) {
+        applicationRepo.deleteById(applicationId);
+    }
 }

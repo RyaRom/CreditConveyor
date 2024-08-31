@@ -1,8 +1,8 @@
 package com.dossier.exception;
 
-import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,9 +27,9 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(MessagingException.class)
+    @ExceptionHandler(MailSendException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage failedFeignRequest(MessagingException exception, WebRequest request) {
+    public ErrorMessage failedFeignRequest(MailSendException exception, WebRequest request) {
         log.error("Failed to send mail: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
