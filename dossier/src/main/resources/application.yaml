@@ -6,7 +6,7 @@ spring:
       finish-registration: "Finish registration email for application %s"
       create-documents: "Scoring is successful. Create documents email for application %s"
       send-documents: "Send documents email for application %s"
-      send-ses: " Ses code: %s. for application %s"
+      send-ses: " Ses code: %s for application %s"
       application-denied: "Application denied email for application %s"
       credit-issued: "Credit issued for application %s"
       document:

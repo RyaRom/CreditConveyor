@@ -8,26 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.Field;
-import java.util.Set;
 
 import static com.dossier.kafka.KafkaTopic.SEND_DOCUMENTS;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class DossierApplicationTests {
 
     @Autowired
+    EmailConsumer emailConsumer;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    EmailConsumer emailConsumer;
 
     @Test
     void sendDocuments() throws Exception {
