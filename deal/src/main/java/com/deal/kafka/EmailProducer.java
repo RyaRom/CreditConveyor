@@ -18,7 +18,7 @@ public class EmailProducer {
 
     @SneakyThrows
     public void sendMessage(String address, KafkaTopic topic, Long applicationId) {
-        EmailMessage emailMessage = new EmailMessage(address, topic.toString(), applicationId);
+        EmailMessage emailMessage = new EmailMessage(address, topic, applicationId);
         String message = objectMapper.writeValueAsString(emailMessage);
         log.info("Send message {}. To topic {}", message, topic.getTopicName());
         kafkaTemplate.send(topic.getTopicName(), message);

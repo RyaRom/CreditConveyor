@@ -34,19 +34,35 @@ public interface DataMapper {
             @Mapping(source = "statusHistoryId", target = "statusHistory")
     })
     ApplicationDTO toApplicationDTO(Application application);
+
+    @Mappings({
+            @Mapping(source = "passportId", target = "passport"),
+            @Mapping(source = "employmentId", target = "employment")
+    })
     ClientDTO toClientDTO(Client client);
 
     @Mappings({
-            @Mapping(source = "employmentStatus", target = "status")
+            @Mapping(source = "employmentStatus", target = "status"),
+            @Mapping(source = "employerInn", target = "employmentInn")
     })
     Employment toEmploymentJsonb(EmploymentDTO employmentDTO);
 
     @Mappings({
+            @Mapping(source = "status", target = "employmentStatus"),
+            @Mapping(source = "employmentInn", target = "employerInn")
+    })
+    EmploymentDTO toEmploymentDTO(Employment employment);
+
+    @Mappings({
             @Mapping(source = "isInsuranceEnabled", target = "insuranceEnable"),
             @Mapping(source = "isSalaryClient", target = "salaryClient"),
-            @Mapping(source = "psk", target = "psk"),
     })
     Credit toCredit(CreditDTO creditDTO);
+    @Mappings({
+            @Mapping(source = "insuranceEnable", target = "isInsuranceEnabled"),
+            @Mapping(source = "salaryClient", target = "isSalaryClient"),
+    })
+    CreditDTO toCreditDTO(Credit credit);
 
     @Mappings({
             @Mapping(source = "request.gender", target = "gender"),

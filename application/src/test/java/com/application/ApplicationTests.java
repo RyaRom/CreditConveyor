@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ConveyorApplicationTests {
+class ApplicationTests {
 	private final LoanApplicationRequestDTO validRequest = LoanApplicationRequestDTO.builder()
 			.amount(1000000.0)
 			.term(24)

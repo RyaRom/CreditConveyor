@@ -200,10 +200,13 @@ public class ApplicationService {
         }
 
         updateApplicationStatus(application, ApplicationStatus.DOCUMENT_SIGNED);
+
         applicationRepo.save(application);
 
         application.getCreditId().setCreditStatus(CreditStatus.ISSUED);
         updateApplicationStatus(application, ApplicationStatus.CREDIT_ISSUED);
+        application.setSignDate(LocalDateTime.now());
+
         applicationRepo.save(application);
 
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREDIT_ISSUED, applicationId);

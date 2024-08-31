@@ -4,7 +4,6 @@ import com.dossier.client.DealClient;
 import com.dossier.kafka.EmailMessage;
 import com.dossier.kafka.KafkaTopic;
 import com.dossier.model.dto.ApplicationDTO;
-import com.dossier.model.enums.ApplicationStatus;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -90,9 +89,6 @@ public class MailSenderService {
                 ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
                 File creditContract = documentService.createDocument(creditContractTemplate, applicationDTO.getCredit(), applicationDTO.getClient());
                 text = sendDocsMailTemplate.formatted(applicationId);
-
-                dealClient.updateApplicationStatusById(applicationId, ApplicationStatus.DOCUMENT_CREATED.toString());
-
                 sendMail(address, theme.toString(), text, creditContract);
             }
             default -> throw new RuntimeException("Error in mail service");
