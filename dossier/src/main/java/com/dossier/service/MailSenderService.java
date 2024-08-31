@@ -1,7 +1,9 @@
 package com.dossier.service;
 
+import com.dossier.client.DealClient;
 import com.dossier.kafka.EmailMessage;
 import com.dossier.kafka.KafkaTopic;
+import com.dossier.model.dto.ApplicationDTO;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class MailSenderService {
 
     private final JavaMailSender sender;
+
+    private final DealClient dealClient;
 
     @Value("${spring.mail.username}")
     private String serviceMail;
@@ -51,7 +55,7 @@ public class MailSenderService {
         sender.send(mimeMessage);
     }
 
-    public void createEmailByTheme(EmailMessage message, KafkaTopic theme) {
+    public void sendEmailByTheme(EmailMessage message, KafkaTopic theme) {
         Long applicationId = message.applicationId();
         String address = message.address();
 
@@ -60,8 +64,10 @@ public class MailSenderService {
             case SEND_DOCUMENTS -> text = sendDocsMailTemplate.formatted(applicationId);
             case FINISH_REGISTRATION -> text = finishRegistrationMailTemplate.formatted(applicationId);
             case APPLICATION_DENIED -> text = applicationDeniedMailTemplate.formatted(applicationId);
-            //TODO send ses code
-            case SEND_SES -> text = sendSesMailTemplate.formatted("", applicationId);
+            case SEND_SES -> {
+                ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
+                text = sendSesMailTemplate.formatted(applicationDTO.getSecCode(), applicationId);
+            }
             case CREDIT_ISSUED -> text = creditIssuedMailTemplate.formatted(applicationId);
             case CREATE_DOCUMENTS -> text = createDocumentsMailTemplate.formatted(applicationId);
             default -> throw new RuntimeException("Error in mail service");
