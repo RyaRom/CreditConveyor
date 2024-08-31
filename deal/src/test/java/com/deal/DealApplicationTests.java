@@ -12,12 +12,13 @@ import com.deal.model.enums.EmploymentStatus;
 import com.deal.model.enums.Gender;
 import com.deal.model.enums.MaritalStatus;
 import com.deal.model.enums.Position;
-import com.deal.model.mapping.ApplicationRequestMapper;
+import com.deal.model.mapping.DataMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
 import com.deal.repo.CreditRepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +117,7 @@ class DealApplicationTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ApplicationRequestMapper applicationRequestMapper;
+    private DataMapper dataMapper;
 
     @Autowired
     private ApplicationRepo applicationRepo;
@@ -157,13 +158,13 @@ class DealApplicationTests {
         mockMvc.perform(put("/deal/offer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(offer)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         mockMvc.perform(put("/deal/calculate/" + applicationId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(finishRegistrationRequestDenied)))
-                .andExpect(status().isNoContent());
-        Application application = applicationRepo.getByApplicationId(applicationId);
+                .andExpect(status().isOk());
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
 
         assertNull(application.getCreditId());
         assertEquals(application.getStatus(), ApplicationStatus.CC_DENIED);
@@ -192,27 +193,27 @@ class DealApplicationTests {
         mockMvc.perform(put("/deal/offer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(offer)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
-        Application application = applicationRepo.getByApplicationId(applicationId);
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
 
         assertEquals(application.getStatus(), ApplicationStatus.APPROVED);
         assertEquals(application.getStatusHistoryId().size(), 2);
-        assertEquals(application.getAppliedOffer().toString(), applicationRequestMapper.toOfferJsonb(offer).toString());
+        assertEquals(application.getAppliedOffer().toString(), dataMapper.toOfferJsonb(offer).toString());
 
         mockMvc.perform(put("/deal/calculate/" + applicationId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(finishRegistrationRequest)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
         Credit credit = creditRepo.getByCreditId(application.getCreditId().getCreditId());
         Client client = clientRepo.getByClientId(application.getClientId().getClientId());
 
-        application = applicationRepo.getByApplicationId(applicationId);
+        application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
         assertNotNull(credit);
         assertNotNull(client);
         assertEquals(application.getStatus(), ApplicationStatus.CC_APPROVED);
         assertEquals(application.getStatusHistoryId().size(), 3);
-        assertEquals(client.getEmploymentId().toString(), applicationRequestMapper.toEmploymentJsonb(employment).toString());
+        assertEquals(client.getEmploymentId().toString(), dataMapper.toEmploymentJsonb(employment).toString());
         assertEquals(client.getGender(), finishRegistrationRequest.getGender());
         assertTrue(areAllFieldsInjected(credit, Collections.emptySet()));
         assertTrue(areAllFieldsInjected(client, Collections.emptySet()));
@@ -237,7 +238,7 @@ class DealApplicationTests {
         });
         System.out.printf("\n\n offers: %s\n\n", offers.stream().map(LoanOfferDTO::toString).collect(Collectors.joining("\n")));
         Long applicationId = offers.get(0).getApplicationId();
-        Application application = applicationRepo.getByApplicationId(applicationId);
+        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
         Client client = clientRepo.getByClientId(application.getClientId().getClientId());
 
         assertNotNull(application);

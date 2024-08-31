@@ -2,7 +2,6 @@ package com.dossier.service;
 
 import com.dossier.kafka.EmailMessage;
 import com.dossier.kafka.KafkaTopic;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

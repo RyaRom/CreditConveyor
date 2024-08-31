@@ -1,5 +1,7 @@
 package com.deal.model.mapping;
 
+import com.deal.model.dto.ApplicationDTO;
+import com.deal.model.dto.ClientDTO;
 import com.deal.model.dto.CreditDTO;
 import com.deal.model.dto.EmploymentDTO;
 import com.deal.model.dto.FinishRegistrationRequestDTO;
@@ -16,7 +18,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
-public interface ApplicationRequestMapper {
+public interface DataMapper {
+
     @Mappings({
             @Mapping(source = "passportSeries", target = "passportId.series"),
             @Mapping(source = "passportNumber", target = "passportId.number"),
@@ -24,6 +27,14 @@ public interface ApplicationRequestMapper {
     Client toClient(LoanApplicationRequestDTO loanApplicationRequestDTO);
 
     LoanOffer toOfferJsonb(LoanOfferDTO loanOfferDTO);
+
+    @Mappings({
+            @Mapping(source = "clientId", target = "client"),
+            @Mapping(source = "creditId", target = "credit"),
+            @Mapping(source = "statusHistoryId", target = "statusHistory")
+    })
+    ApplicationDTO toApplicationDTO(Application application);
+    ClientDTO toClientDTO(Client client);
 
     @Mappings({
             @Mapping(source = "employmentStatus", target = "status")

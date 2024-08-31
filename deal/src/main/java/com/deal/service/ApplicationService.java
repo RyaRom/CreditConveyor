@@ -3,6 +3,7 @@ package com.deal.service;
 import com.deal.client.ConveyorClient;
 import com.deal.kafka.EmailProducer;
 import com.deal.kafka.KafkaTopic;
+import com.deal.model.dto.ApplicationDTO;
 import com.deal.model.dto.CreditDTO;
 import com.deal.model.dto.FinishRegistrationRequestDTO;
 import com.deal.model.dto.LoanApplicationRequestDTO;
@@ -18,7 +19,7 @@ import com.deal.model.json.Employment;
 import com.deal.model.json.LoanOffer;
 import com.deal.model.json.Passport;
 import com.deal.model.json.StatusHistory;
-import com.deal.model.mapping.ApplicationRequestMapper;
+import com.deal.model.mapping.DataMapper;
 import com.deal.repo.ApplicationRepo;
 import com.deal.repo.ClientRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,7 +45,7 @@ public class ApplicationService {
 
     private final ConveyorClient conveyorClient;
 
-    private final ApplicationRequestMapper applicationRequestMapper;
+    private final DataMapper dataMapper;
 
     private final ClientRepo clientRepo;
 
@@ -52,15 +53,15 @@ public class ApplicationService {
 
     private final EmailProducer emailProducer;
 
-    private String generateSESCode(int length) {
+    private String generateSESCode() {
         SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[length];
+        byte[] randomBytes = new byte[20];
         secureRandom.nextBytes(randomBytes);
         return Base64.getUrlEncoder().encodeToString(randomBytes);
     }
 
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        Client client = applicationRequestMapper.toClient(loanApplicationRequestDTO);
+        Client client = dataMapper.toClient(loanApplicationRequestDTO);
         Application application = createApplication(client);
 
         clientRepo.save(client);
@@ -84,7 +85,7 @@ public class ApplicationService {
     }
 
     public void updateApplicationStatusById(Long applicationId, String status) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+        Application application = getApplicationById(applicationId);
         log.info("Update application {} to status {}", applicationId, status);
 
         if (status.equals(ApplicationStatus.CLIENT_DENIED.toString())) {
@@ -119,7 +120,7 @@ public class ApplicationService {
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
         Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + loanOfferDTO.getApplicationId()));
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
-        LoanOffer loanOffer = applicationRequestMapper.toOfferJsonb(loanOfferDTO);
+        LoanOffer loanOffer = dataMapper.toOfferJsonb(loanOfferDTO);
         application.setAppliedOffer(loanOffer);
         applicationRepo.save(application);
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.FINISH_REGISTRATION, application.getApplicationId());
@@ -140,15 +141,15 @@ public class ApplicationService {
         client.setPassportId(passport);
         client.setAccount(request.getAccount());
 
-        Employment employment = applicationRequestMapper.toEmploymentJsonb(request.getEmployment());
+        Employment employment = dataMapper.toEmploymentJsonb(request.getEmployment());
         client.setEmploymentId(employment);
 
         clientRepo.save(client);
     }
 
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
-        ScoringDataDTO scoringData = applicationRequestMapper.mapScoringData(finishRegistrationRequestDTO, application);
+        Application application = getApplicationById(applicationId);
+        ScoringDataDTO scoringData = dataMapper.mapScoringData(finishRegistrationRequestDTO, application);
         log.info("Scoring data: {}", scoringData.toString());
         fillDataFromRegistrationRequest(finishRegistrationRequestDTO, application);
 
@@ -164,7 +165,7 @@ public class ApplicationService {
         }
 
         log.info("Response from conveyor: credit {}", creditDTO.toString());
-        Credit credit = applicationRequestMapper.toCredit(creditDTO);
+        Credit credit = dataMapper.toCredit(creditDTO);
         credit.setCreditStatus(CreditStatus.CALCULATED);
         application.setCreditId(credit);
 
@@ -174,15 +175,15 @@ public class ApplicationService {
     }
 
     public void sendDocuments(Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+        Application application = getApplicationById(applicationId);
         updateApplicationStatus(application, ApplicationStatus.PREPARE_DOCUMENTS);
         applicationRepo.save(application);
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_DOCUMENTS, applicationId);
     }
 
     public void signDocuments(Long applicationId) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
-        String sesCode = generateSESCode(20);
+        Application application = getApplicationById(applicationId);
+        String sesCode = generateSESCode();
         application.setSecCode(sesCode);
         log.info("Generated ses code {}\n For application {}", sesCode, applicationId);
 
@@ -192,7 +193,7 @@ public class ApplicationService {
 
     @SneakyThrows
     public void verifyCode(Long applicationId, String sesCode) {
-        Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+        Application application = getApplicationById(applicationId);
 
         if (!application.getSecCode().equals(sesCode)) {
             throw new AccessDeniedException("Ses code %s is wrong for application Id: %s".formatted(sesCode, applicationId));
@@ -206,5 +207,19 @@ public class ApplicationService {
         applicationRepo.save(application);
 
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREDIT_ISSUED, applicationId);
+    }
+
+    protected Application getApplicationById(Long applicationId) {
+        return applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
+    }
+
+    public ApplicationDTO getApplicationDtoById(Long applicationId) {
+        Application application = getApplicationById(applicationId);
+        return dataMapper.toApplicationDTO(application);
+    }
+
+    public List<ApplicationDTO> getAllApplications() {
+        List<Application> applications = applicationRepo.findAll();
+        return applications.stream().map(dataMapper::toApplicationDTO).toList();
     }
 }

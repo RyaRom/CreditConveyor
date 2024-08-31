@@ -32,6 +32,8 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 server:
   port: 8083
+feign:
+  url: http://localhost:8081
 springdoc:
   swagger-ui:
     path: /dossier/swagger-ui/
