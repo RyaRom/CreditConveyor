@@ -6,32 +6,31 @@ import com.deal.model.json.LoanOffer;
 import com.deal.model.json.StatusHistory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
 @Builder
 @Schema(title = "Application", description = "Application info.")
-public class ApplicationDTO {
+public record ApplicationDTO(
 
-    private Long applicationId;
+        Long applicationId,
 
-    private ClientDTO client;
+        ClientDTO client,
 
-    private CreditDTO credit;
+        CreditDTO credit,
 
-    private ApplicationStatus status;
+        ApplicationStatus status,
 
-    private LocalDateTime creationDate;
+        LocalDateTime creationDate,
 
-    private LocalDateTime signDate;
+        LocalDateTime signDate,
 
-    private LoanOffer appliedOffer;
+        LoanOffer appliedOffer,
 
-    private String secCode;
+        String secCode,
 
-    private List<StatusHistory> statusHistory;
+        List<StatusHistory> statusHistory
 
+) {
 }

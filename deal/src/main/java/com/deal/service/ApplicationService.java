@@ -65,7 +65,20 @@ public class ApplicationService {
         List<LoanOfferDTO> offers = conveyorClient.createOffers(loanApplicationRequestDTO);
         log.info("Response from conveyor MC: {}", offers);
         Long id = application.getApplicationId();
-        offers.forEach(offer -> offer.setApplicationId(id));
+        for (int i = 0, offersSize = offers.size(); i < offersSize; i++) {
+            LoanOfferDTO offer = offers.get(i);
+            offers.set(i, LoanOfferDTO
+                    .builder()
+                    .applicationId(id)
+                    .requestedAmount(offer.requestedAmount())
+                    .totalAmount(offer.totalAmount())
+                    .term(offer.term())
+                    .monthlyPayment(offer.monthlyPayment())
+                    .rate(offer.rate())
+                    .isInsuranceEnabled(offer.isInsuranceEnabled())
+                    .isSalaryClient(offer.isSalaryClient())
+                    .build());
+        }
 
         return offers;
     }
@@ -115,7 +128,8 @@ public class ApplicationService {
 
     @Transactional
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
-        Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + loanOfferDTO.getApplicationId()));
+        Application application = applicationRepo.getByApplicationId(loanOfferDTO.applicationId())
+                .orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + loanOfferDTO.applicationId()));
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
         LoanOffer loanOffer = dataMapper.toOfferJsonb(loanOfferDTO);
         application.setAppliedOffer(loanOffer);
@@ -129,17 +143,17 @@ public class ApplicationService {
         Passport passport = new Passport(
                 client.getPassportId().series(),
                 client.getPassportId().number(),
-                request.getPassportIssueBranch(),
-                request.getPassportIssueDate()
+                request.passportIssueBranch(),
+                request.passportIssueDate()
         );
 
-        client.setGender(request.getGender());
-        client.setMaritalStatus(request.getMaritalStatus());
-        client.setDependentAmount(request.getDependentAmount());
+        client.setGender(request.gender());
+        client.setMaritalStatus(request.maritalStatus());
+        client.setDependentAmount(request.dependentAmount());
         client.setPassportId(passport);
-        client.setAccount(request.getAccount());
+        client.setAccount(request.account());
 
-        Employment employment = dataMapper.toEmploymentJsonb(request.getEmployment());
+        Employment employment = dataMapper.toEmploymentJsonb(request.employment());
         client.setEmploymentId(employment);
 
         clientRepo.save(client);
