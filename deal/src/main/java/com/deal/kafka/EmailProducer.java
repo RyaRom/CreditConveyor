@@ -2,18 +2,19 @@ package com.deal.kafka;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class EmailProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+
     private final ObjectMapper objectMapper;
 
     @SneakyThrows

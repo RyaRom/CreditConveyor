@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         log.warn("Failed prescoring {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         log.warn("Failed scoring for {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();

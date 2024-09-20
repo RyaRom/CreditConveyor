@@ -3,12 +3,7 @@ package com.deal.service;
 import com.deal.client.ConveyorClient;
 import com.deal.kafka.EmailProducer;
 import com.deal.kafka.KafkaTopic;
-import com.deal.model.dto.ApplicationDTO;
-import com.deal.model.dto.CreditDTO;
-import com.deal.model.dto.FinishRegistrationRequestDTO;
-import com.deal.model.dto.LoanApplicationRequestDTO;
-import com.deal.model.dto.LoanOfferDTO;
-import com.deal.model.dto.ScoringDataDTO;
+import com.deal.model.dto.*;
 import com.deal.model.entities.Application;
 import com.deal.model.entities.Client;
 import com.deal.model.entities.Credit;
@@ -40,7 +35,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class ApplicationService {
 
     private final ConveyorClient conveyorClient;
@@ -60,6 +54,7 @@ public class ApplicationService {
         return Base64.getUrlEncoder().encodeToString(randomBytes);
     }
 
+    @Transactional
     public List<LoanOfferDTO> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         Client client = dataMapper.toClient(loanApplicationRequestDTO);
         Application application = createApplication(client);
@@ -84,6 +79,7 @@ public class ApplicationService {
         return application;
     }
 
+    @Transactional
     public void updateApplicationStatusById(Long applicationId, String status) {
         Application application = getApplicationById(applicationId);
         log.info("Update application {} to status {}", applicationId, status);
@@ -117,6 +113,7 @@ public class ApplicationService {
         application.setStatusHistoryId(history);
     }
 
+    @Transactional
     public void updateApplication(LoanOfferDTO loanOfferDTO) {
         Application application = applicationRepo.getByApplicationId(loanOfferDTO.getApplicationId()).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + loanOfferDTO.getApplicationId()));
         updateApplicationStatus(application, ApplicationStatus.APPROVED);
@@ -126,6 +123,7 @@ public class ApplicationService {
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.FINISH_REGISTRATION, application.getApplicationId());
     }
 
+    @Transactional
     protected void fillDataFromRegistrationRequest(FinishRegistrationRequestDTO request, Application application) {
         Client client = application.getClientId();
         Passport passport = new Passport(
@@ -147,6 +145,7 @@ public class ApplicationService {
         clientRepo.save(client);
     }
 
+    @Transactional
     public void applicationScoring(FinishRegistrationRequestDTO finishRegistrationRequestDTO, Long applicationId) {
         Application application = getApplicationById(applicationId);
         ScoringDataDTO scoringData = dataMapper.mapScoringData(finishRegistrationRequestDTO, application);
@@ -174,6 +173,7 @@ public class ApplicationService {
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREATE_DOCUMENTS, applicationId);
     }
 
+    @Transactional
     public void sendDocuments(Long applicationId) {
         Application application = getApplicationById(applicationId);
         updateApplicationStatus(application, ApplicationStatus.PREPARE_DOCUMENTS);
@@ -181,6 +181,7 @@ public class ApplicationService {
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_DOCUMENTS, applicationId);
     }
 
+    @Transactional
     public void signDocuments(Long applicationId) {
         Application application = getApplicationById(applicationId);
         String sesCode = generateSESCode();
@@ -191,6 +192,7 @@ public class ApplicationService {
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.SEND_SES, applicationId);
     }
 
+    @Transactional
     @SneakyThrows
     public void verifyCode(Long applicationId, String sesCode) {
         Application application = getApplicationById(applicationId);
@@ -200,9 +202,6 @@ public class ApplicationService {
         }
 
         updateApplicationStatus(application, ApplicationStatus.DOCUMENT_SIGNED);
-
-        applicationRepo.save(application);
-
         application.getCreditId().setCreditStatus(CreditStatus.ISSUED);
         updateApplicationStatus(application, ApplicationStatus.CREDIT_ISSUED);
         application.setSignDate(LocalDateTime.now());
@@ -212,20 +211,24 @@ public class ApplicationService {
         emailProducer.sendMessage(application.getClientId().getEmail(), KafkaTopic.CREDIT_ISSUED, applicationId);
     }
 
+    @Transactional
     protected Application getApplicationById(Long applicationId) {
         return applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
     }
 
+    @Transactional
     public ApplicationDTO getApplicationDtoById(Long applicationId) {
         Application application = getApplicationById(applicationId);
         return dataMapper.toApplicationDTO(application);
     }
 
+    @Transactional
     public List<ApplicationDTO> getAllApplications() {
         List<Application> applications = applicationRepo.findAll();
         return applications.stream().map(dataMapper::toApplicationDTO).toList();
     }
 
+    @Transactional
     public void deleteApplicationById(Long applicationId) {
         applicationRepo.deleteById(applicationId);
     }

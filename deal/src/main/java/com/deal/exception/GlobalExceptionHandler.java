@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 
 @Slf4j
 @RestControllerAdvice
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         log.warn("Incorrect email in message: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         log.warn("No such entity: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
         log.warn("Access denied: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.FORBIDDEN.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
         log.error("Kafka json serialization error: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
         log.error("Failed conveyor request: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error {} : {}", Arrays.toString(exception.getStackTrace()), exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();

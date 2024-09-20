@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestControllerAdvice
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         log.error("Failed microservice request: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         log.error("Failed to send mail: {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error {}", exception.getMessage());
         return ErrorMessage.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .timestamp(new Date())
+                .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .description(request.getDescription(true))
                 .build();
