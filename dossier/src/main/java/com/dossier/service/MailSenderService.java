@@ -83,11 +83,13 @@ public class MailSenderService {
             case CREDIT_ISSUED -> text = creditIssuedMailTemplate.formatted(applicationId);
             case SEND_SES -> {
                 ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
-                text = sendSesMailTemplate.formatted(applicationDTO.getSecCode(), applicationId);
+                text = sendSesMailTemplate.formatted(applicationDTO.sesCode(), applicationId);
             }
             case SEND_DOCUMENTS -> {
                 ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
-                File creditContract = documentService.createDocument(creditContractTemplate, applicationDTO.getCredit(), applicationDTO.getClient());
+                File creditContract = documentService.createDocument(creditContractTemplate,
+                        applicationDTO.credit(),
+                        applicationDTO.client());
                 text = sendDocsMailTemplate.formatted(applicationId);
                 sendMail(address, theme.toString(), text, creditContract);
             }

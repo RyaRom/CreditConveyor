@@ -6,36 +6,35 @@ import com.dossier.model.json.Employment;
 import com.dossier.model.json.Passport;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDate;
 
-@Data
 @Builder
 @Schema(title = "Client", description = "Client info.")
-public class ClientDTO {
+public record ClientDTO(
 
-    private Long clientId;
+        Long clientId,
 
-    private String lastName;
+        String lastName,
 
-    private String firstName;
+        String firstName,
 
-    private String middleName;
+        String middleName,
 
-    private LocalDate birthdate;
+        LocalDate birthdate,
 
-    private String email;
+        String email,
 
-    private Gender gender;
+        Gender gender,
 
-    private MaritalStatus maritalStatus;
+        MaritalStatus maritalStatus,
 
-    private Integer dependentAmount;
+        Integer dependentAmount,
 
-    private Passport passport;
+        Passport passport,
 
-    private Employment employment;
+        Employment employment,
 
-    private String account;
+        String account
+) {
 }
