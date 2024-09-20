@@ -17,9 +17,9 @@ import java.util.List;
 @Tag(name = "Gateway controller")
 public class GatewayController {
 
-    private ApplicationClient applicationClient;
+    private final ApplicationClient applicationClient;
 
-    private DealClient dealClient;
+    private final DealClient dealClient;
 
     @PostMapping("/application")
     public ResponseEntity<List<LoanOfferDTO>> generateOffers(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {

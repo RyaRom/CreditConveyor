@@ -28,7 +28,7 @@ public record ApplicationDTO(
 
         LoanOffer appliedOffer,
 
-        String secCode,
+        String sesCode,
 
         List<StatusHistory> statusHistory
 

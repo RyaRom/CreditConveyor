@@ -79,7 +79,7 @@ class DossierApplicationTests {
         List<LoanOfferDTO> offers = dealClient.generateOffers(validRequest).getBody();
         assert offers != null;
         LoanOfferDTO offer = offers.get(0);
-        applicationId = offer.getApplicationId();
+        applicationId = offer.applicationId();
 
         dealClient.pickOffer(offer);
         dealClient.calculateCredit(finishRegistrationRequest, applicationId);

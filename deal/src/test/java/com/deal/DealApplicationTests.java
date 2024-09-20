@@ -153,7 +153,7 @@ class DealApplicationTests {
         List<LoanOfferDTO> offers = objectMapper.readValue(result, new TypeReference<>() {
         });
         LoanOfferDTO offer = offers.get(0);
-        Long applicationId = offer.getApplicationId();
+        Long applicationId = offer.applicationId();
 
         mockMvc.perform(put("/deal/offer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,7 +188,7 @@ class DealApplicationTests {
         List<LoanOfferDTO> offers = objectMapper.readValue(result, new TypeReference<>() {
         });
         LoanOfferDTO offer = offers.get(0);
-        Long applicationId = offer.getApplicationId();
+        Long applicationId = offer.applicationId();
 
         mockMvc.perform(put("/deal/offer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -214,10 +214,10 @@ class DealApplicationTests {
         assertEquals(application.getStatus(), ApplicationStatus.CC_APPROVED);
         assertEquals(application.getStatusHistoryId().size(), 3);
         assertEquals(client.getEmploymentId().toString(), dataMapper.toEmploymentJsonb(employment).toString());
-        assertEquals(client.getGender(), finishRegistrationRequest.getGender());
+        assertEquals(client.getGender(), finishRegistrationRequest.gender());
         assertTrue(areAllFieldsInjected(credit, Collections.emptySet()));
         assertTrue(areAllFieldsInjected(client, Collections.emptySet()));
-        assertTrue(areAllFieldsInjected(application, Set.of("secCode", "signDate")));
+        assertTrue(areAllFieldsInjected(application, Set.of("sesCode", "signDate")));
     }
 
     @Test
@@ -237,7 +237,7 @@ class DealApplicationTests {
         List<LoanOfferDTO> offers = objectMapper.readValue(result, new TypeReference<>() {
         });
         System.out.printf("\n\n offers: %s\n\n", offers.stream().map(LoanOfferDTO::toString).collect(Collectors.joining("\n")));
-        Long applicationId = offers.get(0).getApplicationId();
+        Long applicationId = offers.get(0).applicationId();
         Application application = applicationRepo.getByApplicationId(applicationId).orElseThrow(() -> new EntityNotFoundException("Application not found for id: " + applicationId));
         Client client = clientRepo.getByClientId(application.getClientId().getClientId());
 
@@ -245,11 +245,11 @@ class DealApplicationTests {
         assertNotNull(client);
         assertEquals(application.getStatus(), ApplicationStatus.PREAPPROVAL);
         assertEquals(application.getStatusHistoryId().size(), 1);
-        assertEquals(client.getPassportId().series(), validRequest.getPassportSeries());
-        assertEquals(client.getFirstName(), validRequest.getFirstName());
-        assertEquals(client.getMiddleName(), validRequest.getMiddleName());
-        assertEquals(client.getLastName(), validRequest.getLastName());
-        assertEquals(client.getBirthdate(), validRequest.getBirthdate());
+        assertEquals(client.getPassportId().series(), validRequest.passportNumber());
+        assertEquals(client.getFirstName(), validRequest.firstName());
+        assertEquals(client.getMiddleName(), validRequest.middleName());
+        assertEquals(client.getLastName(), validRequest.lastName());
+        assertEquals(client.getBirthdate(), validRequest.birthdate());
     }
 
     @Test

@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MailSenderService {
 
     private final JavaMailSender sender;
@@ -83,6 +85,8 @@ public class MailSenderService {
             case CREDIT_ISSUED -> text = creditIssuedMailTemplate.formatted(applicationId);
             case SEND_SES -> {
                 ApplicationDTO applicationDTO = dealClient.getApplicationById(applicationId);
+                log.info("Received application {}", applicationDTO);
+                log.info("SES code {}", applicationDTO.sesCode());
                 text = sendSesMailTemplate.formatted(applicationDTO.sesCode(), applicationId);
             }
             case SEND_DOCUMENTS -> {

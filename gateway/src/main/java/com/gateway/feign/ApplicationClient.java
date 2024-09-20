@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
-@FeignClient(name = "application-client", configuration = FeignConfig.class, url = "${feign.application-url")
+@FeignClient(name = "application-client", configuration = FeignConfig.class, url = "${feign.application-url}")
 public interface ApplicationClient {
     @PostMapping("/application")
     ResponseEntity<List<LoanOfferDTO>> generateOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient(name = "deal-client", configuration = FeignConfig.class, url = "${feign.deal-url")
+@FeignClient(name = "deal-client", configuration = FeignConfig.class, url = "${feign.deal-url}")
 public interface DealClient {
-    @PutMapping("/calculate/{applicationId}")
+    @PutMapping("/deal/calculate/{applicationId}")
     ResponseEntity<Void> calculateCredit(FinishRegistrationRequestDTO finishRegistrationRequestDTO, @PathVariable Long applicationId);
 
     @PostMapping("/deal/document/{applicationId}/send")

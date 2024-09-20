@@ -31,7 +31,8 @@ public interface DataMapper {
     @Mappings({
             @Mapping(source = "clientId", target = "client"),
             @Mapping(source = "creditId", target = "credit"),
-            @Mapping(source = "statusHistoryId", target = "statusHistory")
+            @Mapping(source = "statusHistoryId", target = "statusHistory"),
+            @Mapping(source = "secCode", target = "sesCode")
     })
     ApplicationDTO toApplicationDTO(Application application);
 
