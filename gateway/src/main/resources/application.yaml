@@ -9,3 +9,10 @@ server:
 springdoc:
   swagger-ui:
     path: /gateway/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

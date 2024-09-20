@@ -73,3 +73,10 @@ feign:
 springdoc:
   swagger-ui:
     path: /dossier/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
