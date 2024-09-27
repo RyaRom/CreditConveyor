@@ -18,116 +18,127 @@ import java.util.List;
 @Slf4j
 @Service
 public class ScoringService {
+
     @Value("${scoring.base-rate}")
-    private Double baseRate;
+    private BigDecimal baseRate;
+
     @Value("${scoring.insurance-discount}")
-    private Double insuranceDiscount;
+    private BigDecimal insuranceDiscount;
+
     @Value("${scoring.insurance-cost}")
-    private Double insuranceCost;
+    private BigDecimal insuranceCost;
+
     @Value("${scoring.salary-client-discount}")
-    private Double salaryClientDiscount;
+    private BigDecimal salaryClientDiscount;
 
     public CreditDTO scoring(ScoringDataDTO scoringData) throws FailedScoringException {
-        Double rate = getBaseRate(scoringData.getIsInsuranceEnabled(), scoringData.getIsSalaryClient());
+        BigDecimal rate = getBaseRate(scoringData.isInsuranceEnabled(), scoringData.isSalaryClient());
         rate = calculateFinalRate(scoringData, rate);
-        Double totalAmount = getTotalAmount(
-                scoringData.getIsInsuranceEnabled(),
-                scoringData.getIsSalaryClient(),
-                scoringData.getAmount()
+        BigDecimal totalAmount = getTotalAmount(
+                scoringData.isInsuranceEnabled(),
+                scoringData.isSalaryClient(),
+                scoringData.amount()
         );
-        Double monthlyPayment = getMonthlyPayment(totalAmount, rate, scoringData.getTerm());
-        List<PaymentScheduleElementDTO> payments = getPayments(totalAmount, rate, monthlyPayment, scoringData.getTerm());
-        Double psk = getPSK(payments, scoringData.getAmount(), scoringData.getTerm());
+        BigDecimal monthlyPayment = getMonthlyPayment(totalAmount, rate, scoringData.term());
+        List<PaymentScheduleElementDTO> payments = getPayments(totalAmount, rate, monthlyPayment, scoringData.term());
+        BigDecimal psk = getPSK(payments, scoringData.amount(), scoringData.term());
 
         CreditDTO credit = CreditDTO.builder()
                 .amount(totalAmount)
-                .isSalaryClient(scoringData.getIsSalaryClient())
-                .isInsuranceEnabled(scoringData.getIsInsuranceEnabled())
-                .term(scoringData.getTerm())
+                .isSalaryClient(scoringData.isSalaryClient())
+                .isInsuranceEnabled(scoringData.isInsuranceEnabled())
+                .term(scoringData.term())
                 .rate(rate)
                 .psk(round(psk))
                 .monthlyPayment(monthlyPayment)
                 .paymentSchedule(payments)
                 .build();
-        log.info("Credit created {} For person {} ", credit.toString(), scoringData.getAccount());
+        log.info("Credit created {} For person {} ", credit.toString(), scoringData.account());
         log.info("Payment schedule {}", payments);
         return credit;
     }
 
-    protected Double round(Double value) {
-        if (Math.abs(value) < 1) return 0.0;
-        BigDecimal bigDecimalValue = new BigDecimal(value);
-        BigDecimal roundedValue = bigDecimalValue.setScale(2, RoundingMode.UP);
-        return roundedValue.doubleValue();
+    protected BigDecimal round(BigDecimal value) {
+        if (Math.abs(value.doubleValue()) < 1) return BigDecimal.valueOf(0.0);
+        return value.setScale(2, RoundingMode.UP);
     }
 
-    private Double calculateFinalRate(ScoringDataDTO scoringData, Double baseRate) throws FailedScoringException {
-        EmploymentDTO employment = scoringData.getEmployment();
+    private BigDecimal calculateFinalRate(ScoringDataDTO scoringData, BigDecimal baseRate) throws FailedScoringException {
+        EmploymentDTO employment = scoringData.employment();
         List<String> refuseReasons = new ArrayList<>();
-        switch (employment.getEmploymentStatus()) {
+        switch (employment.employmentStatus()) {
             case UNEMPLOYED -> refuseReasons.add("Unemployment");
-            case SELF_EMPLOYED -> baseRate++;
-            case BUSINESS_OWNER -> baseRate += 3;
+            case SELF_EMPLOYED -> baseRate = baseRate.add(BigDecimal.valueOf(1));
+            case BUSINESS_OWNER -> baseRate = baseRate.add(BigDecimal.valueOf(3));
         }
-        switch (employment.getPosition()) {
-            case MID_MANAGER -> baseRate -= 2;
-            case TOP_MANAGER -> baseRate -= 4;
+        switch (employment.position()) {
+            case MID_MANAGER -> baseRate = baseRate.subtract(BigDecimal.valueOf(2));
+            case TOP_MANAGER -> baseRate = baseRate.subtract(BigDecimal.valueOf(4));
         }
-        if (scoringData.getAmount() > employment.getSalary() * 20) refuseReasons.add("Loan amount is too big");
-        switch (scoringData.getMaritalStatus()) {
-            case MARRIED -> baseRate -= 3;
-            case DIVORCED -> baseRate++;
+        if (scoringData.amount().doubleValue() > employment.salary().doubleValue() * 20)
+            refuseReasons.add("Loan amount is too big");
+        switch (scoringData.maritalStatus()) {
+            case MARRIED -> baseRate = baseRate.subtract(BigDecimal.valueOf(3));
+            case DIVORCED -> baseRate = baseRate.add(BigDecimal.valueOf(1));
         }
-        if (scoringData.getDependentAmount() > 1) baseRate++;
+        if (scoringData.dependentAmount() > 1) baseRate = baseRate.add(BigDecimal.valueOf(1));
 
-        int age = getAge(scoringData.getBirthdate());
+        int age = getAge(scoringData.birthdate());
         if (age > 60 || age < 20) {
             refuseReasons.add("Too old or young");
         }
-        switch (scoringData.getGender()) {
+        switch (scoringData.gender()) {
             case MALE -> {
-                if (age >= 30 && age <= 55) baseRate -= 3;
+                if (age >= 30 && age <= 55) baseRate = baseRate.subtract(BigDecimal.valueOf(3));
             }
             case FEMALE -> {
-                if (age >= 35 && age <= 60) baseRate -= 3;
+                if (age >= 35 && age <= 60) baseRate = baseRate.subtract(BigDecimal.valueOf(3));
             }
-            case NON_BINARY -> baseRate += 3;
+            case NON_BINARY -> baseRate = baseRate.add(BigDecimal.valueOf(3));
         }
-        if (employment.getWorkExperienceCurrent() < 3) refuseReasons.add("Not enough current work experience");
-        if (employment.getWorkExperienceTotal() < 12) refuseReasons.add("Not enough work experience");
+        if (employment.workExperienceCurrent() < 3) refuseReasons.add("Not enough current work experience");
+        if (employment.workExperienceTotal() < 12) refuseReasons.add("Not enough work experience");
         if (!refuseReasons.isEmpty()) {
-            String message = "Client " + scoringData.getAccount() + " "
+            String message = "Client " + scoringData.account() + " "
                     + String.join(", ", refuseReasons);
             throw new FailedScoringException(message);
         }
         return baseRate;
     }
 
-    private Double getPSK(List<PaymentScheduleElementDTO> payments, Double requestedAmount, Integer term) {
-        Double paymentSum = payments.stream().map(PaymentScheduleElementDTO::getTotalPayment).reduce(Double::sum).orElse(0.0);
-        Double psk = 100 * (paymentSum / requestedAmount - 1) / (term / 12);
+    private BigDecimal getPSK(List<PaymentScheduleElementDTO> payments, BigDecimal requestedAmount, Integer term) {
+        BigDecimal paymentSum = payments.stream()
+                .map(PaymentScheduleElementDTO::totalPayment)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.valueOf(0.0));
+        BigDecimal psk = BigDecimal.valueOf(100 * (paymentSum.divide(requestedAmount).doubleValue() - 1) / (term / 12));
         log.info("PSK = {}", psk);
         return psk;
     }
 
-    private List<PaymentScheduleElementDTO> getPayments(Double totalAmount, Double rate, Double monthlyPayment, Integer term) {
-        Double remainingDebt = totalAmount;
+    private List<PaymentScheduleElementDTO> getPayments(BigDecimal totalAmount, BigDecimal rate, BigDecimal monthlyPayment, Integer term) {
+        BigDecimal remainingDebt = totalAmount;
         LocalDate date = LocalDate.now();
         List<PaymentScheduleElementDTO> payments = new ArrayList<>(List.of(
                 PaymentScheduleElementDTO.builder()
                         .number(0)
                         .date(date)
                         .remainingDebt(remainingDebt)
-                        .totalPayment(0.0)
-                        .debtPayment(0.0)
-                        .interestPayment(0.0)
+                        .totalPayment(BigDecimal.valueOf(0.0))
+                        .debtPayment(BigDecimal.valueOf(0.0))
+                        .interestPayment(BigDecimal.valueOf(0.0))
                         .build()
         ));
         for (int i = 1; i <= term; i++) {
             date = date.plusMonths(1);
-            Double interestPayment = round(remainingDebt * (rate / 100) / 12);
-            Double debtPayment = round(monthlyPayment - interestPayment);
-            remainingDebt = round(remainingDebt - debtPayment);
+            BigDecimal interestPayment = round(
+                    remainingDebt.multiply(rate)
+                            .divide(BigDecimal.valueOf(100),
+                                    RoundingMode.HALF_UP)
+                            .divide(BigDecimal.valueOf(12),
+                                    RoundingMode.HALF_UP));
+            BigDecimal debtPayment = round(monthlyPayment.subtract(interestPayment));
+            remainingDebt = round(remainingDebt.subtract(debtPayment));
             payments.add(PaymentScheduleElementDTO
                     .builder()
                     .date(date)
@@ -145,24 +156,28 @@ public class ScoringService {
         return LocalDate.now().getYear() - birthdate.getYear();
     }
 
-    public Double getBaseRate(Boolean isInsuranceEnabled, Boolean isSalaryClient) {
-        Double rate = baseRate;
-        rate -= isInsuranceEnabled ? insuranceDiscount : 0;
-        rate -= isSalaryClient ? salaryClientDiscount : 0;
-        return rate;
+    public BigDecimal getBaseRate(Boolean isInsuranceEnabled, Boolean isSalaryClient) {
+        double rate = baseRate.doubleValue();
+        rate -= isInsuranceEnabled ? insuranceDiscount.doubleValue() : 0;
+        rate -= isSalaryClient ? salaryClientDiscount.doubleValue() : 0;
+        return BigDecimal.valueOf(rate);
     }
 
-    public Double getTotalAmount(Boolean isInsuranceEnabled, Boolean isSalaryClient, Double requestedAmount) {
+    public BigDecimal getTotalAmount(Boolean isInsuranceEnabled, Boolean isSalaryClient, BigDecimal requestedAmount) {
         if (isInsuranceEnabled) {
             if (isSalaryClient) return requestedAmount;
-            else return requestedAmount + insuranceCost;
+            else return requestedAmount.add(insuranceCost);
         } else return requestedAmount;
     }
 
-    public Double getMonthlyPayment(Double totalAmount, Double rate, Integer term) {
-        double monthlyRate = rate / (100 * 12);
-        double numerator = monthlyRate * Math.pow(1 + monthlyRate, term);
-        double denominator = Math.pow(1 + monthlyRate, term) - 1;
-        return round(totalAmount * (numerator / denominator));
+    public BigDecimal getMonthlyPayment(BigDecimal totalAmount, BigDecimal rate, Integer term) {
+        BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
+        BigDecimal onePlusMonthlyRate = BigDecimal.ONE.add(monthlyRate);
+        BigDecimal numerator = monthlyRate.multiply(onePlusMonthlyRate.pow(term));
+        BigDecimal denominator = onePlusMonthlyRate.pow(term).subtract(BigDecimal.ONE);
+        BigDecimal result = totalAmount.multiply(numerator.divide(denominator, 10, RoundingMode.HALF_UP));
+
+        return round(result);
     }
 }

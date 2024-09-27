@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: gateway
+feign:
+  application-url: http://localhost:8082
+  deal-url: http://localhost:8081
+server:
+  port: 8084
+springdoc:
+  swagger-ui:
+    path: /gateway/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

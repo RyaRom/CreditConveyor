@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ConveyorApplicationTests {
     private final LoanApplicationRequestDTO validRequest = LoanApplicationRequestDTO.builder()
-            .amount(1000000.0)
+            .amount(BigDecimal.valueOf(1000000.0))
             .term(24)
             .firstName("Ivan")
             .lastName("Ivanov")
@@ -38,7 +39,7 @@ class ConveyorApplicationTests {
             .build();
 
     private final LoanApplicationRequestDTO invalidRequest = LoanApplicationRequestDTO.builder()
-            .amount(-200.0)
+            .amount(BigDecimal.valueOf(-200.0))
             .term(24)
             .firstName("Ivan")
             .lastName("Ivanov")
@@ -50,7 +51,7 @@ class ConveyorApplicationTests {
             .build();
 
     private final ScoringDataDTO validScoringData = ScoringDataDTO.builder()
-            .amount(1000000.0)
+            .amount(BigDecimal.valueOf(1000000.0))
             .term(12)
             .firstName("Ivan")
             .lastName("Ivanov")
@@ -65,8 +66,8 @@ class ConveyorApplicationTests {
             .dependentAmount(1)
             .employment(EmploymentDTO.builder()
                     .employmentStatus(EmploymentStatus.EMPLOYED)
-                    .employerINN("123456789012")
-                    .salary(100000.0)
+                    .employerInn("123456789012")
+                    .salary(BigDecimal.valueOf(100000.0))
                     .position(Position.WORKER)
                     .workExperienceTotal(12)
                     .workExperienceCurrent(24)
@@ -77,7 +78,7 @@ class ConveyorApplicationTests {
             .build();
 
     private final ScoringDataDTO invalidScoringData = ScoringDataDTO.builder()
-            .amount(0.0)
+            .amount(BigDecimal.valueOf(0.0))
             .term(12)
             .firstName("Ivan")
             .lastName("Ivanov")
@@ -92,8 +93,8 @@ class ConveyorApplicationTests {
             .dependentAmount(1)
             .employment(EmploymentDTO.builder()
                     .employmentStatus(EmploymentStatus.UNEMPLOYED)
-                    .employerINN("123456789012")
-                    .salary(100000.0)
+                    .employerInn("123456789012")
+                    .salary(BigDecimal.valueOf(100000.0))
                     .position(Position.WORKER)
                     .workExperienceTotal(12)
                     .workExperienceCurrent(24)

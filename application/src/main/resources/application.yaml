@@ -8,3 +8,10 @@ server:
 springdoc:
   swagger-ui:
     path: /application/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

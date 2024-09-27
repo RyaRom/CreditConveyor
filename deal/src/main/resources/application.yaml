@@ -17,6 +17,16 @@ spring:
     password: password
     driver-class-name: org.postgresql.Driver
     enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: МС-dossier-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 springdoc:
   swagger-ui:
     path: /deal/swagger-ui/

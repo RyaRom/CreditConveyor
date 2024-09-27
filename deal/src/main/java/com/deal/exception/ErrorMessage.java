@@ -3,13 +3,13 @@ package com.deal.exception;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class ErrorMessage {
     private final int statusCode;
-    private final Date timestamp;
+    private final LocalDateTime timestamp;
     private final String message;
     private final String description;
 }
