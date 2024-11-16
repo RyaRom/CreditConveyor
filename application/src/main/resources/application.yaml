@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: application
+feign:
+  url: http://localhost:8081
+server:
+  port: 8082
+springdoc:
+  swagger-ui:
+    path: /application/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

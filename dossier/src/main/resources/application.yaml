@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: dossier
+  mail:
+    templates:
+      finish-registration: "Finish registration email for application %s"
+      create-documents: "Scoring is successful. Create documents email for application %s"
+      send-documents: "Send documents email for application %s"
+      send-ses: " Ses code: %s for application %s"
+      application-denied: "Application denied email for application %s"
+      credit-issued: "Credit issued for application %s"
+      document:
+        credit-contract: "Credit Contract
+
+Amount: {amount}
+Term: {term} months
+Monthly Payment: {monthlyPayment}
+PSK (Effective Annual Rate): {psk}%
+Insurance Enabled: {insuranceEnable}
+Salary Client: {salaryClient}
+
+Client Information:
+Client ID: {clientId}
+Full Name: {lastName} {firstName} {middleName}
+Birthdate: {birthdate}
+Email: {email}
+Gender: {gender}
+Marital Status: {maritalStatus}
+Dependents: {dependentAmount}
+
+Passport Information:
+Series: {passportSeries}
+Number: {passportNumber}
+Issue Branch: {passportIssueBranch}
+Issue Date: {passportIssueDate}
+
+Employment Information:
+Status: {employmentStatus}
+INN: {employmentInn}
+Salary: {employmentSalary}
+Position: {employmentPosition}
+Total Work Experience: {employmentWorkExperienceTotal} years
+Current Work Experience: {employmentWorkExperienceCurrent} years
+
+Payment Schedule:
+{paymentSchedule}
+"
+    host: smtp.yandex.com
+    port: 465
+    username: credit.conveyor.app@yandex.ru
+    password: gbvbigkpedhojyfx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+server:
+  port: 8083
+feign:
+  url: http://localhost:8081
+springdoc:
+  swagger-ui:
+    path: /dossier/swagger-ui/
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

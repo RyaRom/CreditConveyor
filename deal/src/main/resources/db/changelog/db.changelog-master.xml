@@ -1,0 +1,113 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="RyaRom" id="25082024_create_table_application">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="application"/>
+            </not>
+        </preConditions>
+        <createTable tableName="application">
+            <column autoIncrement="true" name="application_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="application_pkey"/>
+            </column>
+            <column name="client_id" type="BIGINT"/>
+            <column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="credit_id" type="BIGINT"/>
+            <column name="sign_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="sec_code" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="applied_offer" type="JSONB"/>
+            <column name="status_history_id" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_create_table_client">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client"/>
+            </not>
+        </preConditions>
+        <createTable tableName="client">
+            <column name="birthdate" type="date"/>
+            <column name="dependent_amount" type="INTEGER"/>
+            <column autoIncrement="true" name="client_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="client_pkey"/>
+            </column>
+            <column name="account" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="gender" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="marital_status" type="VARCHAR(255)"/>
+            <column name="middle_name" type="VARCHAR(255)"/>
+            <column name="employment_id" type="JSONB"/>
+            <column name="passport_id" type="JSONB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_create_table_credit">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="credit"/>
+            </not>
+        </preConditions>
+        <createTable tableName="credit">
+            <column name="amount" type="numeric(38, 2)"/>
+            <column name="insurance_enable" type="BOOLEAN"/>
+            <column name="monthly_payment" type="numeric(38, 2)"/>
+            <column name="psk" type="numeric(38, 2)"/>
+            <column name="salary_client" type="BOOLEAN"/>
+            <column name="term" type="INTEGER"/>
+            <column autoIncrement="true" name="credit_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="credit_pkey"/>
+            </column>
+            <column name="credit_status" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_create_table_payment_schedule_element">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="payment_schedule_element"/>
+            </not>
+        </preConditions>
+        <createTable tableName="payment_schedule_element">
+            <column name="date" type="date"/>
+            <column name="debt_payment" type="numeric(38, 2)"/>
+            <column name="interest_payment" type="numeric(38, 2)"/>
+            <column name="number" type="INTEGER"/>
+            <column name="remaining_debt" type="numeric(38, 2)"/>
+            <column name="total_payment" type="numeric(38, 2)"/>
+            <column name="credit_id" type="BIGINT"/>
+            <column autoIncrement="true" name="schedule_element_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="payment_schedule_element_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_unique_application_client_id_key">
+        <addUniqueConstraint columnNames="client_id" constraintName="application_client_id_key"
+                             tableName="application"/>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_unique_application_credit_id_key">
+        <addUniqueConstraint columnNames="credit_id" constraintName="application_credit_id_key"
+                             tableName="application"/>
+    </changeSet>
+
+    <changeSet author="RyaRom" id="25082024_payment_schedule_element_to_credit_fk">
+        <addForeignKeyConstraint baseColumnNames="credit_id" baseTableName="payment_schedule_element"
+                                 constraintName="payment_schedule_element_to_credit_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="credit_id" referencedTableName="credit" validate="true"/>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_client_to_application_fk">
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="application"
+                                 constraintName="client_to_application_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="client_id"
+                                 referencedTableName="client" validate="true"/>
+    </changeSet>
+    <changeSet author="RyaRom" id="25082024_credit_to_application_fk">
+        <addForeignKeyConstraint baseColumnNames="credit_id" baseTableName="application"
+                                 constraintName="credit_to_application_fk" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="credit_id"
+                                 referencedTableName="credit" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

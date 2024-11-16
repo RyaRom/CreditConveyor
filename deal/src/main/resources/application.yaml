@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: deal
+  datasource:
+    username: postgres
+    password: password
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    user: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: МС-dossier-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+springdoc:
+  swagger-ui:
+    path: /deal/swagger-ui/
+server:
+  port: 8081
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
+feign:
+  url: http://localhost:8080
