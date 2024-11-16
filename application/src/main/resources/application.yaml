@@ -3,7 +3,7 @@ spring:
     name: application
 feign:
   url: http://localhost:8081
-  docker-url: http://deal:8082
+  docker-url: http://deal:8080/deal
 server:
   port: 8082
 springdoc:

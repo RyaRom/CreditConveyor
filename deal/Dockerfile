@@ -14,3 +14,4 @@ WORKDIR /app
 COPY --from=build /app/target/deal-0.0.1-SNAPSHOT.jar /app/
 
 ENTRYPOINT ["java", "-jar", "deal-0.0.1-SNAPSHOT.jar"]
+#ENTRYPOINT ["/bin/bash"]

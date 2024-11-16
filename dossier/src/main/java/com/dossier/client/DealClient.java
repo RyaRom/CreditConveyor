@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "deal-client", configuration = FeignConfig.class, url = "${feign.docker-url")
+@FeignClient(name = "deal-client", configuration = FeignConfig.class, url = "${feign.docker-url}")
 public interface DealClient {
 
     @GetMapping("/application/{applicationId}")

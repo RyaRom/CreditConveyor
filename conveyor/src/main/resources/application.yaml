@@ -7,10 +7,6 @@ scoring:
   insurance-discount: 3.0
   insurance-cost: 100000.0
   salary-client-discount: 1.0
-
-springdoc:
-  swagger-ui:
-    path: /conveyor/swagger-ui/
 logging:
   level:
     org:
