@@ -1,4 +1,4 @@
-package com.application.feign;
+package com.application.config;
 
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;

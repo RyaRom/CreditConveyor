@@ -70,6 +70,7 @@ server:
   port: 8083
 feign:
   url: http://localhost:8081
+  docker-url: http://deal:8082
 springdoc:
   swagger-ui:
     path: /dossier/swagger-ui/

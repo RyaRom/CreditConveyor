@@ -1,4 +1,4 @@
-package com.application.feign;
+package com.application.config;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

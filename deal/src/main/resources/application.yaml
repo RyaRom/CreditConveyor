@@ -4,7 +4,8 @@ spring:
   datasource:
     username: postgres
     password: password
-    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
+    url: jdbc:postgresql://database:5432/credit_conveyor_db
+#    url: jdbc:postgresql://localhost:5432/credit_conveyor_db
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -41,3 +42,4 @@ logging:
             CommonsRequestLoggingFilter: DEBUG
 feign:
   url: http://localhost:8080
+  docker-url: http://conveyor:8081

@@ -1,6 +1,6 @@
 package com.application.service;
 
-import com.application.feign.DealClient;
+import com.application.client.DealClient;
 import com.application.model.dto.LoanApplicationRequestDTO;
 import com.application.model.dto.LoanOfferDTO;
 import lombok.RequiredArgsConstructor;
